@@ -21,7 +21,6 @@ Regarding coding instructions:
 - Implement proper error handling, including custom error types when beneficial.
 - Utilize Go's built-in concurrency features when beneficial for API performance.
 - Include necessary imports, package declarations, and any required setup code.
-- Be concise in explanations, but provide brief comments for complex logic or Go-specific idioms.
 - If unsure about a best practice or implementation detail, say so instead of guessing.
 - Go Files that are stored in the db directory are automatically generated files from sqlc, and need not to be modified. If they are not correct, the `go tool sqlc generate` command needs to be run again.
 - Go Files that are stored in the web directory are automatically generated files from templ, and need not to be modified. If they are not correct, the `go tool templ generate` command needs to be run again.

@@ -1,0 +1,15 @@
+version: "2"
+sql:
+  - engine: "sqlite"
+    queries: "query.sql"
+    schema: "schema.sql"
+    gen:
+      go:
+        package: db
+        out: .
+        emit_prepared_queries: true
+        omit_unused_structs: true
+        query_parameter_limit: 2
+        initialisms:
+          - id
+          - url

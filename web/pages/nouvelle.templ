@@ -1,0 +1,14 @@
+package pages
+
+import (
+	"github.com/willoma/recherche-maison/db"
+	"github.com/willoma/recherche-maison/web/components"
+)
+
+// Nouvelle is the new house page
+templ Nouvelle(cities []db.City, allHouses []db.House) {
+	@components.Layout("Nouvelle maison", allHouses) {
+		<h1>Ajouter une nouvelle maison</h1>
+		@components.MaisonForm(nil, cities, nil, nil, nil, true)
+	}
+}

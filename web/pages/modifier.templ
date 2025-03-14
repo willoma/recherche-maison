@@ -1,0 +1,14 @@
+package pages
+
+import (
+	"github.com/willoma/recherche-maison/db"
+	"github.com/willoma/recherche-maison/web/components"
+)
+
+// Modifier is the edit house page
+templ Modifier(house db.House, cities []db.City, urls []db.PublicationURL, photos []string, attachments []string, allHouses []db.House) {
+	@components.Layout("Modifier " + house.Title, allHouses) {
+		<h1>Modifier { house.Title }</h1>
+		@components.MaisonForm(&house, cities, urls, photos, attachments, false)
+	}
+}

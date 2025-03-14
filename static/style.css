@@ -1,0 +1,21 @@
+/* 
+ * Main stylesheet for the housing research application
+ * Theme color: Purple
+ */
+
+:root {
+  --primary-color: #6a0dad;
+  --primary-light: #9c4dcc;
+  --primary-dark: #38006b;
+  --accent-color: #ff9800;
+  --text-color: #333;
+  --text-light: #666;
+  --background-color: #f5f5f5;
+  --white: #fff;
+  --danger: #d32f2f;
+  --success: #388e3c;
+  --border-color: #ddd;
+  --sidebar-width: 250px;
+}
+
+/* Base styles will be implemented later */

@@ -1,0 +1,33 @@
+package components
+
+import "github.com/willoma/recherche-maison/db"
+
+// Layout is the main layout template for all pages
+templ Layout(title string, houses []db.House) {
+	<!DOCTYPE html>
+	<html lang="fr">
+		<head>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<title>{ title } - Recherche Maison</title>
+			<link rel="stylesheet" href="/static/style.css"/>
+			<script src="/static/script.js" defer></script>
+		</head>
+		<body>
+			<aside>
+				<nav>
+					<ul>
+						<li><a href="/">Résumé</a></li>
+						<li><a href="/maisons/nouvelle">Ajouter une maison</a></li>
+						<li><a href="/villes">Modifier les villes</a></li>
+						<li class="separator">Maisons</li>
+						<!-- House links will be rendered here -->
+					</ul>
+				</nav>
+			</aside>
+			<main>
+				{ children... }
+			</main>
+		</body>
+	</html>
+}
