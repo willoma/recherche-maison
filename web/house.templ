@@ -37,8 +37,8 @@ func formatDate(date time.Time) string {
 }
 
 // House detail page
-templ HousePage(house models.House, publicationURLs []models.PublicationURL, photos []string, attachments []string) {
-	@Layout(house.Title) {
+templ HousePage(house models.House, publicationURLs []models.PublicationURL, photos []string, attachments []string, allHouses []models.House) {
+	@Layout(house.Title, allHouses) {
 		<div class="house-details">
 			<div class="house-header">
 				<h3>{ house.Title }</h3>
@@ -141,8 +141,8 @@ templ HousePage(house models.House, publicationURLs []models.PublicationURL, pho
 }
 
 // Create house page
-templ CreateHousePage(cities []models.City) {
-	@Layout("Nouvelle maison") {
+templ CreateHousePage(cities []models.City, houses []models.House) {
+	@Layout("Nouvelle maison", houses) {
 		<form method="post" enctype="multipart/form-data" class="house-form">
 			@houseFormFields(models.House{}, nil, nil, nil, cities)
 			<div class="form-actions">
@@ -154,8 +154,8 @@ templ CreateHousePage(cities []models.City) {
 }
 
 // Modify house page
-templ ModifyHousePage(house models.House, publicationURLs []models.PublicationURL, photos []string, attachments []string, cities []models.City) {
-	@Layout("Modifier la maison") {
+templ ModifyHousePage(house models.House, publicationURLs []models.PublicationURL, photos []string, attachments []string, cities []models.City, allHouses []models.House) {
+	@Layout("Modifier la maison", allHouses) {
 		<form method="post" enctype="multipart/form-data" class="house-form">
 			@houseFormFields(house, publicationURLs, photos, attachments, cities)
 			<div class="form-actions">
@@ -167,8 +167,8 @@ templ ModifyHousePage(house models.House, publicationURLs []models.PublicationUR
 }
 
 // Delete house page
-templ DeleteHousePage(house models.House) {
-	@Layout("Supprimer la maison") {
+templ DeleteHousePage(house models.House, allHouses []models.House) {
+	@Layout("Supprimer la maison", allHouses) {
 		<div class="delete-confirmation">
 			<p>Êtes-vous sûre de vouloir supprimer la maison <strong>{ house.Title }</strong> ?</p>
 			<p class="warning">Cette action est irréversible. Toutes les photos et pièces jointes seront également supprimées.</p>

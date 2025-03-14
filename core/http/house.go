@@ -14,6 +14,13 @@ import (
 )
 
 func (s *Server) createHousePage(w http.ResponseWriter, r *http.Request) {
+	houses, err := s.houseService.ListHouses(r.Context())
+	if err != nil {
+		slog.Error("Failed to get houses", "error", err)
+		http.Error(w, "Erreur interne du serveur", http.StatusInternalServerError)
+		return
+	}
+
 	// Get cities for the dropdown
 	cities, err := s.cityService.ListCities(r.Context())
 	if err != nil {
@@ -23,7 +30,7 @@ func (s *Server) createHousePage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Render template
-	component := web.CreateHousePage(cities)
+	component := web.CreateHousePage(cities, houses)
 	if err := component.Render(r.Context(), w); err != nil {
 		slog.Error("Failed to render create house page", "error", err)
 		http.Error(w, "Erreur interne du serveur", http.StatusInternalServerError)
@@ -50,14 +57,6 @@ func (s *Server) createHouse(w http.ResponseWriter, r *http.Request) {
 	// Handle publication URLs
 	urls := r.Form["pub_url[]"]
 	dates := r.Form["pub_date[]"]
-
-	slog.Info("FORM", "form", r.Form)
-
-	if len(urls) == 0 {
-		slog.Error("At least one publication URL is required")
-		http.Error(w, "Au moins une URL de publication est obligatoire", http.StatusBadRequest)
-		return
-	}
 
 	// Add publication URLs
 	for i, url := range urls {
@@ -92,6 +91,13 @@ func (s *Server) createHouse(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) modifyHousePage(w http.ResponseWriter, r *http.Request) {
+	houses, err := s.houseService.ListHouses(r.Context())
+	if err != nil {
+		slog.Error("Failed to get houses", "error", err)
+		http.Error(w, "Erreur interne du serveur", http.StatusInternalServerError)
+		return
+	}
+
 	// Get house ID from URL
 	idStr := r.PathValue("id")
 	id, err := strconv.ParseInt(idStr, 10, 64)
@@ -142,7 +148,7 @@ func (s *Server) modifyHousePage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Render template
-	component := web.ModifyHousePage(house, publicationURLs, photos, attachments, cities)
+	component := web.ModifyHousePage(house, publicationURLs, photos, attachments, cities, houses)
 	if err := component.Render(r.Context(), w); err != nil {
 		slog.Error("Failed to render modify house page", "error", err)
 		http.Error(w, "Erreur interne du serveur", http.StatusInternalServerError)
@@ -181,6 +187,13 @@ func (s *Server) modifyHouse(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) deleteHousePage(w http.ResponseWriter, r *http.Request) {
+	houses, err := s.houseService.ListHouses(r.Context())
+	if err != nil {
+		slog.Error("Failed to get houses", "error", err)
+		http.Error(w, "Erreur interne du serveur", http.StatusInternalServerError)
+		return
+	}
+
 	// Get house ID from URL
 	idStr := r.PathValue("id")
 	id, err := strconv.ParseInt(idStr, 10, 64)
@@ -199,7 +212,7 @@ func (s *Server) deleteHousePage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Render template
-	component := web.DeleteHousePage(house)
+	component := web.DeleteHousePage(house, houses)
 	if err := component.Render(r.Context(), w); err != nil {
 		slog.Error("Failed to render delete house page", "error", err)
 		http.Error(w, "Erreur interne du serveur", http.StatusInternalServerError)
@@ -211,6 +224,13 @@ func (s *Server) deleteHouse(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) housePage(w http.ResponseWriter, r *http.Request) {
+	houses, err := s.houseService.ListHouses(r.Context())
+	if err != nil {
+		slog.Error("Failed to get houses", "error", err)
+		http.Error(w, "Erreur interne du serveur", http.StatusInternalServerError)
+		return
+	}
+
 	// Get house ID from URL
 	idStr := r.PathValue("id")
 	id, err := strconv.ParseInt(idStr, 10, 64)
@@ -253,7 +273,7 @@ func (s *Server) housePage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Render template
-	component := web.HousePage(house, publicationURLs, photos, attachments)
+	component := web.HousePage(house, publicationURLs, photos, attachments, houses)
 	if err := component.Render(r.Context(), w); err != nil {
 		slog.Error("Failed to render house page", "error", err)
 		http.Error(w, "Erreur interne du serveur", http.StatusInternalServerError)

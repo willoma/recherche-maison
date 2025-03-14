@@ -3,7 +3,7 @@ package web
 import "github.com/willoma/recherche-maison/models"
 
 templ MainPage(houses []models.House) {
-	@Layout("Accueil") {
+	@Layout("Accueil", houses) {
 		<div class="houses-table-container">
 			if len(houses) == 0 {
 				<p class="empty-state">Aucune maison n'a été ajoutée.</p>

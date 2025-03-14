@@ -12,6 +12,13 @@ import (
 
 // modifyCitiesPage renders the page for managing cities
 func (s *Server) modifyCitiesPage(w http.ResponseWriter, r *http.Request) {
+	houses, err := s.houseService.ListHouses(r.Context())
+	if err != nil {
+		slog.Error("Failed to get houses", "error", err)
+		http.Error(w, "Erreur interne du serveur", http.StatusInternalServerError)
+		return
+	}
+
 	// Get all cities
 	cities, err := s.cityService.ListCities(r.Context())
 	if err != nil {
@@ -21,7 +28,7 @@ func (s *Server) modifyCitiesPage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Render template
-	component := web.CityManagementPage(cities)
+	component := web.CityManagementPage(cities, houses)
 	if err := component.Render(r.Context(), w); err != nil {
 		slog.Error("Failed to render city management page", "error", err)
 		http.Error(w, "Erreur interne du serveur", http.StatusInternalServerError)

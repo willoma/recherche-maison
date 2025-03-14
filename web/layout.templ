@@ -1,6 +1,12 @@
 package web
 
-templ Layout(title string) {
+import (
+	"strconv"
+
+	"github.com/willoma/recherche-maison/models"
+)
+
+templ Layout(title string, houses []models.House) {
 	<!DOCTYPE html>
 	<html lang="fr">
 		<head>
@@ -21,6 +27,18 @@ templ Layout(title string) {
 						<li><a href="/maison/creer">Nouvelle maison</a></li>
 						<li><a href="/villes">Gestion des villes</a></li>
 					</ul>
+					if len(houses) > 0 {
+						<h3>Maisons</h3>
+						<ul class="sidebar-menu">
+							for _, house := range houses {
+								<li>
+									<a href={ templ.SafeURL("/maison/" + strconv.FormatInt(house.ID, 10)) }>
+										{ house.Title }
+									</a>
+								</li>
+							}
+						</ul>
+					}
 				</nav>
 				<main class="content">
 					<header class="content-header">

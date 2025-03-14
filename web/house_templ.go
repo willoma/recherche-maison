@@ -45,7 +45,7 @@ func formatDate(date time.Time) string {
 }
 
 // House detail page
-func HousePage(house models.House, publicationURLs []models.PublicationURL, photos []string, attachments []string) templ.Component {
+func HousePage(house models.House, publicationURLs []models.PublicationURL, photos []string, attachments []string, allHouses []models.House) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -365,7 +365,7 @@ func HousePage(house models.House, publicationURLs []models.PublicationURL, phot
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = Layout(house.Title).Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = Layout(house.Title, allHouses).Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -374,7 +374,7 @@ func HousePage(house models.House, publicationURLs []models.PublicationURL, phot
 }
 
 // Create house page
-func CreateHousePage(cities []models.City) templ.Component {
+func CreateHousePage(cities []models.City, houses []models.House) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -421,7 +421,7 @@ func CreateHousePage(cities []models.City) templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = Layout("Nouvelle maison").Render(templ.WithChildren(ctx, templ_7745c5c3_Var21), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = Layout("Nouvelle maison", houses).Render(templ.WithChildren(ctx, templ_7745c5c3_Var21), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -430,7 +430,7 @@ func CreateHousePage(cities []models.City) templ.Component {
 }
 
 // Modify house page
-func ModifyHousePage(house models.House, publicationURLs []models.PublicationURL, photos []string, attachments []string, cities []models.City) templ.Component {
+func ModifyHousePage(house models.House, publicationURLs []models.PublicationURL, photos []string, attachments []string, cities []models.City, allHouses []models.House) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -486,7 +486,7 @@ func ModifyHousePage(house models.House, publicationURLs []models.PublicationURL
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = Layout("Modifier la maison").Render(templ.WithChildren(ctx, templ_7745c5c3_Var23), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = Layout("Modifier la maison", allHouses).Render(templ.WithChildren(ctx, templ_7745c5c3_Var23), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -495,7 +495,7 @@ func ModifyHousePage(house models.House, publicationURLs []models.PublicationURL
 }
 
 // Delete house page
-func DeleteHousePage(house models.House) templ.Component {
+func DeleteHousePage(house models.House, allHouses []models.House) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -565,7 +565,7 @@ func DeleteHousePage(house models.House) templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = Layout("Supprimer la maison").Render(templ.WithChildren(ctx, templ_7745c5c3_Var26), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = Layout("Supprimer la maison", allHouses).Render(templ.WithChildren(ctx, templ_7745c5c3_Var26), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

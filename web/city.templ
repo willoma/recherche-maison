@@ -3,8 +3,8 @@ package web
 import "github.com/willoma/recherche-maison/models"
 
 // CityManagementPage renders the page for managing cities
-templ CityManagementPage(cities []models.City) {
-	@Layout("Gestion des villes") {
+templ CityManagementPage(cities []models.City, houses []models.House) {
+	@Layout("Gestion des villes", houses) {
 		<div class="city-management">
 			<div class="cities-list">
 				<h3>Villes existantes</h3>
