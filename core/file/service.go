@@ -1,4 +1,4 @@
-package fichier
+package file
 
 import (
 	"io"

@@ -11,7 +11,7 @@ import (
 
 func (s *Server) createHousePage(w http.ResponseWriter, r *http.Request) {
 	// Get cities for the dropdown
-	cities, err := s.villeService.ListCities(r.Context())
+	cities, err := s.cityService.ListCities(r.Context())
 	if err != nil {
 		slog.Error("Failed to get cities", "error", err)
 		http.Error(w, "Erreur interne du serveur", http.StatusInternalServerError)
@@ -41,7 +41,7 @@ func (s *Server) modifyHousePage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get house from database
-	house, err := s.maisonService.GetHouse(r.Context(), id)
+	house, err := s.houseService.GetHouse(r.Context(), id)
 	if err != nil {
 		slog.Error("Failed to get house", "id", id, "error", err)
 		http.Error(w, "Maison introuvable", http.StatusNotFound)
@@ -49,7 +49,7 @@ func (s *Server) modifyHousePage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get publication URLs
-	publicationURLs, err := s.maisonService.GetPublicationURLs(r.Context(), id)
+	publicationURLs, err := s.houseService.GetPublicationURLs(r.Context(), id)
 	if err != nil {
 		slog.Error("Failed to get publication URLs", "house_id", id, "error", err)
 		http.Error(w, "Erreur interne du serveur", http.StatusInternalServerError)
@@ -57,7 +57,7 @@ func (s *Server) modifyHousePage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get photos
-	photos, err := s.maisonService.GetPhotos(id)
+	photos, err := s.houseService.GetPhotos(id)
 	if err != nil {
 		slog.Error("Failed to get photos", "house_id", id, "error", err)
 		http.Error(w, "Erreur interne du serveur", http.StatusInternalServerError)
@@ -65,7 +65,7 @@ func (s *Server) modifyHousePage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get attachments
-	attachments, err := s.maisonService.GetAttachments(id)
+	attachments, err := s.houseService.GetAttachments(id)
 	if err != nil {
 		slog.Error("Failed to get attachments", "house_id", id, "error", err)
 		http.Error(w, "Erreur interne du serveur", http.StatusInternalServerError)
@@ -73,7 +73,7 @@ func (s *Server) modifyHousePage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get cities for the dropdown
-	cities, err := s.villeService.ListCities(r.Context())
+	cities, err := s.cityService.ListCities(r.Context())
 	if err != nil {
 		slog.Error("Failed to get cities", "error", err)
 		http.Error(w, "Erreur interne du serveur", http.StatusInternalServerError)
@@ -103,7 +103,7 @@ func (s *Server) deleteHousePage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get house from database
-	house, err := s.maisonService.GetHouse(r.Context(), id)
+	house, err := s.houseService.GetHouse(r.Context(), id)
 	if err != nil {
 		slog.Error("Failed to get house", "id", id, "error", err)
 		http.Error(w, "Maison introuvable", http.StatusNotFound)
@@ -133,7 +133,7 @@ func (s *Server) housePage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get house from database
-	house, err := s.maisonService.GetHouse(r.Context(), id)
+	house, err := s.houseService.GetHouse(r.Context(), id)
 	if err != nil {
 		slog.Error("Failed to get house", "id", id, "error", err)
 		http.Error(w, "Maison introuvable", http.StatusNotFound)
@@ -141,7 +141,7 @@ func (s *Server) housePage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get publication URLs
-	publicationURLs, err := s.maisonService.GetPublicationURLs(r.Context(), id)
+	publicationURLs, err := s.houseService.GetPublicationURLs(r.Context(), id)
 	if err != nil {
 		slog.Error("Failed to get publication URLs", "house_id", id, "error", err)
 		http.Error(w, "Erreur interne du serveur", http.StatusInternalServerError)
@@ -149,7 +149,7 @@ func (s *Server) housePage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get photos
-	photos, err := s.maisonService.GetPhotos(id)
+	photos, err := s.houseService.GetPhotos(id)
 	if err != nil {
 		slog.Error("Failed to get photos", "house_id", id, "error", err)
 		http.Error(w, "Erreur interne du serveur", http.StatusInternalServerError)
@@ -157,7 +157,7 @@ func (s *Server) housePage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get attachments
-	attachments, err := s.maisonService.GetAttachments(id)
+	attachments, err := s.houseService.GetAttachments(id)
 	if err != nil {
 		slog.Error("Failed to get attachments", "house_id", id, "error", err)
 		http.Error(w, "Erreur interne du serveur", http.StatusInternalServerError)

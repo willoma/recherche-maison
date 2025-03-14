@@ -7,35 +7,35 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/willoma/recherche-maison/core/fichier"
-	"github.com/willoma/recherche-maison/core/maison"
-	"github.com/willoma/recherche-maison/core/ville"
+	"github.com/willoma/recherche-maison/core/city"
+	"github.com/willoma/recherche-maison/core/file"
+	"github.com/willoma/recherche-maison/core/house"
 	"github.com/willoma/recherche-maison/static"
 )
 
 // Server handles HTTP requests for the application
 type Server struct {
-	fileService   *fichier.Service
-	maisonService *maison.Service
-	villeService  *ville.Service
-	uploadsDir    string
-	port          int
+	fileService  *file.Service
+	houseService *house.Service
+	cityService  *city.Service
+	uploadsDir   string
+	port         int
 }
 
 // NewServer creates a new HTTP server
-func NewServer(fileService *fichier.Service, maisonService *maison.Service, villeService *ville.Service, uploadsDir string, port int) *Server {
+func NewServer(fileService *file.Service, houseService *house.Service, cityService *city.Service, uploadsDir string, port int) *Server {
 	return &Server{
-		fileService:   fileService,
-		maisonService: maisonService,
-		villeService:  villeService,
-		uploadsDir:    uploadsDir,
-		port:          port,
+		fileService:  fileService,
+		houseService: houseService,
+		cityService:  cityService,
+		uploadsDir:   uploadsDir,
+		port:         port,
 	}
 }
 
 // Run starts the HTTP server
-func Run(fileService *fichier.Service, maisonService *maison.Service, villeService *ville.Service, uploadsDir string, port int) {
-	server := NewServer(fileService, maisonService, villeService, uploadsDir, port)
+func Run(fileService *file.Service, houseService *house.Service, cityService *city.Service, uploadsDir string, port int) {
+	server := NewServer(fileService, houseService, cityService, uploadsDir, port)
 	server.Start()
 }
 

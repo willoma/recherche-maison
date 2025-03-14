@@ -6,14 +6,14 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/willoma/recherche-maison/core/ville"
+	"github.com/willoma/recherche-maison/core/city"
 	"github.com/willoma/recherche-maison/web"
 )
 
 // modifyCitiesPage renders the page for managing cities
 func (s *Server) modifyCitiesPage(w http.ResponseWriter, r *http.Request) {
 	// Get all cities
-	cities, err := s.villeService.ListCities(r.Context())
+	cities, err := s.cityService.ListCities(r.Context())
 	if err != nil {
 		slog.Error("Failed to get cities", "error", err)
 		http.Error(w, "Erreur interne du serveur", http.StatusInternalServerError)
@@ -50,7 +50,7 @@ func (s *Server) modifyCities(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// Create city
-		err := s.villeService.CreateCity(r.Context(), cityName)
+		err := s.cityService.CreateCity(r.Context(), cityName)
 		if err != nil {
 			slog.Error("Failed to create city", "name", cityName, "error", err)
 			http.Error(w, "Erreur lors de la création de la ville", http.StatusInternalServerError)
@@ -75,9 +75,9 @@ func (s *Server) modifyCities(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// Delete city
-		err = s.villeService.DeleteCity(r.Context(), cityID)
+		err = s.cityService.DeleteCity(r.Context(), cityID)
 		if err != nil {
-			if errors.Is(err, ville.ErrCityInUse) {
+			if errors.Is(err, city.ErrCityInUse) {
 				slog.Error("Cannot delete city that is used by houses", "id", cityID)
 				http.Error(w, "La ville est utilisée par des maisons et ne peut pas être supprimée", http.StatusBadRequest)
 				return

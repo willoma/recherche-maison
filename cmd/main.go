@@ -6,10 +6,10 @@ import (
 
 	_ "modernc.org/sqlite"
 
-	"github.com/willoma/recherche-maison/core/fichier"
+	"github.com/willoma/recherche-maison/core/city"
+	"github.com/willoma/recherche-maison/core/file"
+	"github.com/willoma/recherche-maison/core/house"
 	"github.com/willoma/recherche-maison/core/http"
-	"github.com/willoma/recherche-maison/core/maison"
-	"github.com/willoma/recherche-maison/core/ville"
 	"github.com/willoma/recherche-maison/db"
 )
 
@@ -37,9 +37,9 @@ func main() {
 
 	// Initialize services
 	queries := db.New(dbConn)
-	fileService := fichier.NewService(uploadsDir)
-	maisonService := maison.NewService(queries, uploadsDir)
-	villeService := ville.NewService(queries)
+	fileService := file.NewService(uploadsDir)
+	houseService := house.NewService(queries, uploadsDir)
+	cityService := city.NewService(queries)
 
-	http.Run(fileService, maisonService, villeService, uploadsDir, port)
+	http.Run(fileService, houseService, cityService, uploadsDir, port)
 }
