@@ -1,12 +1,12 @@
 -- name: GetCity :one
-SELECT * FROM cities
+SELECT * FROM cities_with_used
 WHERE id = ? LIMIT 1;
 
 -- name: ListCities :many
-SELECT * FROM cities
+SELECT * FROM cities_with_used
 ORDER BY name;
 
--- name: CreateCity :one
+-- name: CreateCity :exec
 INSERT INTO cities (
 	name
 ) VALUES (
@@ -14,20 +14,14 @@ INSERT INTO cities (
 )
 RETURNING *;
 
--- name: UpdateCity :one
+-- name: UpdateCity :exec
 UPDATE cities
 SET name = ?
-WHERE id = ?
-RETURNING *;
+WHERE cities.id = sqlc.arg(id);
 
 -- name: DeleteCity :exec
 DELETE FROM cities
 WHERE id = ?;
-
--- name: IsCityUsedByHouses :one
-SELECT EXISTS(
-	SELECT 1 FROM houses WHERE city_id = ?
-) AS is_used;
 
 -- name: GetHouse :one
 SELECT * FROM houses_with_cities
@@ -37,7 +31,7 @@ WHERE id = ? LIMIT 1;
 SELECT * FROM houses_with_cities
 ORDER BY created_at DESC;
 
--- name: CreateHouse :one
+-- name: CreateHouse :exec
 INSERT INTO houses (
 	title,
 	city_id,
@@ -57,10 +51,9 @@ INSERT INTO houses (
 	notes
 ) VALUES (
 	?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
-)
-RETURNING *;
+);
 
--- name: UpdateHouse :one
+-- name: UpdateHouse :exec
 UPDATE houses
 SET
 	updated_at = CURRENT_TIMESTAMP,
@@ -80,8 +73,7 @@ SET
 	outdoor_parking_spaces = ?,
 	main_photo = ?,
 	notes = ?
-WHERE id = ?
-RETURNING *;
+WHERE id = ?;
 
 -- name: DeleteHouse :exec
 DELETE FROM houses
@@ -92,23 +84,21 @@ SELECT * FROM publication_urls
 WHERE house_id = ?
 ORDER BY publication_date DESC;
 
--- name: CreatePublicationURL :one
+-- name: CreatePublicationURL :exec
 INSERT INTO publication_urls (
 	house_id,
 	url,
 	publication_date
 ) VALUES (
 	?, ?, ?
-)
-RETURNING *;
+);
 
--- name: UpdatePublicationURL :one
+-- name: UpdatePublicationURL :exec
 UPDATE publication_urls
 SET
 	url = ?,
 	publication_date = ?
-WHERE id = ?
-RETURNING *;
+WHERE id = ?;
 
 -- name: DeletePublicationURL :exec
 DELETE FROM publication_urls

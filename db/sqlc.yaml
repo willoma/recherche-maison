@@ -16,3 +16,5 @@ sql:
         rename:
           house: DBHouse
           houses_with_city: House
+          city: DBCity
+          cities_with_used: City

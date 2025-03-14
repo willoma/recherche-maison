@@ -3,7 +3,7 @@ package web
 import "github.com/willoma/recherche-maison/db"
 
 // CityManagementPage renders the page for managing cities
-templ CityManagementPage(cities []db.City, usedCities map[int64]bool) {
+templ CityManagementPage(cities []db.City) {
 	@Layout("Gestion des villes") {
 		<div class="city-management">
 			<div class="cities-list">
@@ -23,7 +23,7 @@ templ CityManagementPage(cities []db.City, usedCities map[int64]bool) {
 								<tr>
 									<td>{ city.Name }</td>
 									<td class="actions">
-										if !usedCities[city.ID] {
+										if !city.IsUsed {
 											<form action="/villes" method="post" class="inline-form">
 												<input type="hidden" name="action" value="delete"/>
 												<input type="hidden" name="city_id" value={ formatID(city.ID) }/>
@@ -39,7 +39,6 @@ templ CityManagementPage(cities []db.City, usedCities map[int64]bool) {
 					</table>
 				}
 			</div>
-
 			<div class="city-form-container">
 				<h3>Ajouter une ville</h3>
 				<form action="/villes" method="post" class="city-form">

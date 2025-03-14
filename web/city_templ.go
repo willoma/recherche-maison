@@ -11,7 +11,7 @@ import templruntime "github.com/a-h/templ/runtime"
 import "github.com/willoma/recherche-maison/db"
 
 // CityManagementPage renders the page for managing cities
-func CityManagementPage(cities []db.City, usedCities map[int64]bool) templ.Component {
+func CityManagementPage(cities []db.City) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -76,7 +76,7 @@ func CityManagementPage(cities []db.City, usedCities map[int64]bool) templ.Compo
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					if !usedCities[city.ID] {
+					if !city.IsUsed {
 						templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<form action=\"/villes\" method=\"post\" class=\"inline-form\"><input type=\"hidden\" name=\"action\" value=\"delete\"> <input type=\"hidden\" name=\"city_id\" value=\"")
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err

@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-const createCity = `-- name: CreateCity :one
+const createCity = `-- name: CreateCity :exec
 INSERT INTO cities (
 	name
 ) VALUES (
@@ -20,14 +20,12 @@ INSERT INTO cities (
 RETURNING id, name
 `
 
-func (q *Queries) CreateCity(ctx context.Context, name string) (City, error) {
-	row := q.queryRow(ctx, q.createCityStmt, createCity, name)
-	var i City
-	err := row.Scan(&i.ID, &i.Name)
-	return i, err
+func (q *Queries) CreateCity(ctx context.Context, name string) error {
+	_, err := q.exec(ctx, q.createCityStmt, createCity, name)
+	return err
 }
 
-const createHouse = `-- name: CreateHouse :one
+const createHouse = `-- name: CreateHouse :exec
 INSERT INTO houses (
 	title,
 	city_id,
@@ -48,7 +46,6 @@ INSERT INTO houses (
 ) VALUES (
 	?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
 )
-RETURNING id, created_at, updated_at, title, city_id, address, price, surface, rooms, bedrooms, bathrooms, floors, construction_year, house_type, land_surface, has_garage, outdoor_parking_spaces, main_photo, notes
 `
 
 type CreateHouseParams struct {
@@ -70,8 +67,8 @@ type CreateHouseParams struct {
 	Notes                sql.NullString
 }
 
-func (q *Queries) CreateHouse(ctx context.Context, arg CreateHouseParams) (DBHouse, error) {
-	row := q.queryRow(ctx, q.createHouseStmt, createHouse,
+func (q *Queries) CreateHouse(ctx context.Context, arg CreateHouseParams) error {
+	_, err := q.exec(ctx, q.createHouseStmt, createHouse,
 		arg.Title,
 		arg.CityID,
 		arg.Address,
@@ -89,32 +86,10 @@ func (q *Queries) CreateHouse(ctx context.Context, arg CreateHouseParams) (DBHou
 		arg.MainPhoto,
 		arg.Notes,
 	)
-	var i DBHouse
-	err := row.Scan(
-		&i.ID,
-		&i.CreatedAt,
-		&i.UpdatedAt,
-		&i.Title,
-		&i.CityID,
-		&i.Address,
-		&i.Price,
-		&i.Surface,
-		&i.Rooms,
-		&i.Bedrooms,
-		&i.Bathrooms,
-		&i.Floors,
-		&i.ConstructionYear,
-		&i.HouseType,
-		&i.LandSurface,
-		&i.HasGarage,
-		&i.OutdoorParkingSpaces,
-		&i.MainPhoto,
-		&i.Notes,
-	)
-	return i, err
+	return err
 }
 
-const createPublicationURL = `-- name: CreatePublicationURL :one
+const createPublicationURL = `-- name: CreatePublicationURL :exec
 INSERT INTO publication_urls (
 	house_id,
 	url,
@@ -122,7 +97,6 @@ INSERT INTO publication_urls (
 ) VALUES (
 	?, ?, ?
 )
-RETURNING id, house_id, url, publication_date
 `
 
 type CreatePublicationURLParams struct {
@@ -131,16 +105,9 @@ type CreatePublicationURLParams struct {
 	PublicationDate time.Time
 }
 
-func (q *Queries) CreatePublicationURL(ctx context.Context, arg CreatePublicationURLParams) (PublicationURL, error) {
-	row := q.queryRow(ctx, q.createPublicationURLStmt, createPublicationURL, arg.HouseID, arg.URL, arg.PublicationDate)
-	var i PublicationURL
-	err := row.Scan(
-		&i.ID,
-		&i.HouseID,
-		&i.URL,
-		&i.PublicationDate,
-	)
-	return i, err
+func (q *Queries) CreatePublicationURL(ctx context.Context, arg CreatePublicationURLParams) error {
+	_, err := q.exec(ctx, q.createPublicationURLStmt, createPublicationURL, arg.HouseID, arg.URL, arg.PublicationDate)
+	return err
 }
 
 const deleteAllPublicationURLs = `-- name: DeleteAllPublicationURLs :exec
@@ -184,14 +151,14 @@ func (q *Queries) DeletePublicationURL(ctx context.Context, id int64) error {
 }
 
 const getCity = `-- name: GetCity :one
-SELECT id, name FROM cities
+SELECT id, name, is_used FROM cities_with_used
 WHERE id = ? LIMIT 1
 `
 
 func (q *Queries) GetCity(ctx context.Context, id int64) (City, error) {
 	row := q.queryRow(ctx, q.getCityStmt, getCity, id)
 	var i City
-	err := row.Scan(&i.ID, &i.Name)
+	err := row.Scan(&i.ID, &i.Name, &i.IsUsed)
 	return i, err
 }
 
@@ -262,21 +229,8 @@ func (q *Queries) GetPublicationURLs(ctx context.Context, houseID int64) ([]Publ
 	return items, nil
 }
 
-const isCityUsedByHouses = `-- name: IsCityUsedByHouses :one
-SELECT EXISTS(
-	SELECT 1 FROM houses WHERE city_id = ?
-) AS is_used
-`
-
-func (q *Queries) IsCityUsedByHouses(ctx context.Context, cityID int64) (int64, error) {
-	row := q.queryRow(ctx, q.isCityUsedByHousesStmt, isCityUsedByHouses, cityID)
-	var is_used int64
-	err := row.Scan(&is_used)
-	return is_used, err
-}
-
 const listCities = `-- name: ListCities :many
-SELECT id, name FROM cities
+SELECT id, name, is_used FROM cities_with_used
 ORDER BY name
 `
 
@@ -289,7 +243,7 @@ func (q *Queries) ListCities(ctx context.Context) ([]City, error) {
 	var items []City
 	for rows.Next() {
 		var i City
-		if err := rows.Scan(&i.ID, &i.Name); err != nil {
+		if err := rows.Scan(&i.ID, &i.Name, &i.IsUsed); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
@@ -352,21 +306,18 @@ func (q *Queries) ListHouses(ctx context.Context) ([]House, error) {
 	return items, nil
 }
 
-const updateCity = `-- name: UpdateCity :one
+const updateCity = `-- name: UpdateCity :exec
 UPDATE cities
 SET name = ?
-WHERE id = ?
-RETURNING id, name
+WHERE cities.id = ?2
 `
 
-func (q *Queries) UpdateCity(ctx context.Context, name string, iD int64) (City, error) {
-	row := q.queryRow(ctx, q.updateCityStmt, updateCity, name, iD)
-	var i City
-	err := row.Scan(&i.ID, &i.Name)
-	return i, err
+func (q *Queries) UpdateCity(ctx context.Context, name string, iD int64) error {
+	_, err := q.exec(ctx, q.updateCityStmt, updateCity, name, iD)
+	return err
 }
 
-const updateHouse = `-- name: UpdateHouse :one
+const updateHouse = `-- name: UpdateHouse :exec
 UPDATE houses
 SET
 	updated_at = CURRENT_TIMESTAMP,
@@ -387,7 +338,6 @@ SET
 	main_photo = ?,
 	notes = ?
 WHERE id = ?
-RETURNING id, created_at, updated_at, title, city_id, address, price, surface, rooms, bedrooms, bathrooms, floors, construction_year, house_type, land_surface, has_garage, outdoor_parking_spaces, main_photo, notes
 `
 
 type UpdateHouseParams struct {
@@ -410,8 +360,8 @@ type UpdateHouseParams struct {
 	ID                   int64
 }
 
-func (q *Queries) UpdateHouse(ctx context.Context, arg UpdateHouseParams) (DBHouse, error) {
-	row := q.queryRow(ctx, q.updateHouseStmt, updateHouse,
+func (q *Queries) UpdateHouse(ctx context.Context, arg UpdateHouseParams) error {
+	_, err := q.exec(ctx, q.updateHouseStmt, updateHouse,
 		arg.Title,
 		arg.CityID,
 		arg.Address,
@@ -430,38 +380,15 @@ func (q *Queries) UpdateHouse(ctx context.Context, arg UpdateHouseParams) (DBHou
 		arg.Notes,
 		arg.ID,
 	)
-	var i DBHouse
-	err := row.Scan(
-		&i.ID,
-		&i.CreatedAt,
-		&i.UpdatedAt,
-		&i.Title,
-		&i.CityID,
-		&i.Address,
-		&i.Price,
-		&i.Surface,
-		&i.Rooms,
-		&i.Bedrooms,
-		&i.Bathrooms,
-		&i.Floors,
-		&i.ConstructionYear,
-		&i.HouseType,
-		&i.LandSurface,
-		&i.HasGarage,
-		&i.OutdoorParkingSpaces,
-		&i.MainPhoto,
-		&i.Notes,
-	)
-	return i, err
+	return err
 }
 
-const updatePublicationURL = `-- name: UpdatePublicationURL :one
+const updatePublicationURL = `-- name: UpdatePublicationURL :exec
 UPDATE publication_urls
 SET
 	url = ?,
 	publication_date = ?
 WHERE id = ?
-RETURNING id, house_id, url, publication_date
 `
 
 type UpdatePublicationURLParams struct {
@@ -470,14 +397,7 @@ type UpdatePublicationURLParams struct {
 	ID              int64
 }
 
-func (q *Queries) UpdatePublicationURL(ctx context.Context, arg UpdatePublicationURLParams) (PublicationURL, error) {
-	row := q.queryRow(ctx, q.updatePublicationURLStmt, updatePublicationURL, arg.URL, arg.PublicationDate, arg.ID)
-	var i PublicationURL
-	err := row.Scan(
-		&i.ID,
-		&i.HouseID,
-		&i.URL,
-		&i.PublicationDate,
-	)
-	return i, err
+func (q *Queries) UpdatePublicationURL(ctx context.Context, arg UpdatePublicationURLParams) error {
+	_, err := q.exec(ctx, q.updatePublicationURLStmt, updatePublicationURL, arg.URL, arg.PublicationDate, arg.ID)
+	return err
 }

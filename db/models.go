@@ -10,30 +10,9 @@ import (
 )
 
 type City struct {
-	ID   int64
-	Name string
-}
-
-type DBHouse struct {
-	ID                   int64
-	CreatedAt            time.Time
-	UpdatedAt            time.Time
-	Title                string
-	CityID               int64
-	Address              sql.NullString
-	Price                int64
-	Surface              int64
-	Rooms                int64
-	Bedrooms             int64
-	Bathrooms            int64
-	Floors               int64
-	ConstructionYear     sql.NullInt64
-	HouseType            string
-	LandSurface          sql.NullInt64
-	HasGarage            sql.NullBool
-	OutdoorParkingSpaces sql.NullInt64
-	MainPhoto            sql.NullString
-	Notes                sql.NullString
+	ID     int64
+	Name   string
+	IsUsed bool
 }
 
 type House struct {

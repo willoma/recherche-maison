@@ -25,14 +25,18 @@ CREATE TABLE IF NOT EXISTS houses (
     notes TEXT
 );
 
-CREATE VIEW IF NOT EXISTS houses_with_cities
-AS SELECT houses.*, cities.name AS city_name
-FROM houses
-JOIN cities ON houses.city_id = cities.id;
-
 CREATE TABLE IF NOT EXISTS publication_urls (
     id INTEGER PRIMARY KEY,
     house_id INTEGER NOT NULL REFERENCES houses(id) ON DELETE CASCADE,
     url TEXT NOT NULL,
     publication_date DATE NOT NULL
 );
+
+CREATE VIEW IF NOT EXISTS cities_with_used
+AS SELECT cities.*, CAST(EXISTS (SELECT 1 FROM houses WHERE houses.city_id = cities.id) AS BOOLEAN) AS is_used
+FROM cities;
+
+CREATE VIEW IF NOT EXISTS houses_with_cities
+AS SELECT houses.*, cities.name AS city_name
+FROM houses
+JOIN cities ON houses.city_id = cities.id;
