@@ -31,7 +31,7 @@ WHERE id = ? LIMIT 1;
 SELECT * FROM houses_with_cities
 ORDER BY created_at DESC;
 
--- name: CreateHouse :exec
+-- name: CreateHouse :execlastid
 INSERT INTO houses (
 	title,
 	city_id,

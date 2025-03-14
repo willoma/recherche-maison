@@ -32,7 +32,8 @@ func main() {
 	// Initialize services
 	queries := db.New(dbConn)
 	fileService := file.NewService()
-	houseService := house.NewService(queries)
+
+	houseService := house.NewService(queries, dbConn)
 	cityService := city.NewService(queries)
 
 	http.Run(fileService, houseService, cityService)

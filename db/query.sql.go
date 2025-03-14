@@ -24,7 +24,7 @@ func (q *Queries) CreateCity(ctx context.Context, name string) error {
 	return err
 }
 
-const createHouse = `-- name: CreateHouse :exec
+const createHouse = `-- name: CreateHouse :execlastid
 INSERT INTO houses (
 	title,
 	city_id,
@@ -66,8 +66,8 @@ type CreateHouseParams struct {
 	Notes                string
 }
 
-func (q *Queries) CreateHouse(ctx context.Context, arg CreateHouseParams) error {
-	_, err := q.exec(ctx, q.createHouseStmt, createHouse,
+func (q *Queries) CreateHouse(ctx context.Context, arg CreateHouseParams) (int64, error) {
+	result, err := q.exec(ctx, q.createHouseStmt, createHouse,
 		arg.Title,
 		arg.CityID,
 		arg.Address,
@@ -85,7 +85,10 @@ func (q *Queries) CreateHouse(ctx context.Context, arg CreateHouseParams) error 
 		arg.MainPhoto,
 		arg.Notes,
 	)
-	return err
+	if err != nil {
+		return 0, err
+	}
+	return result.LastInsertId()
 }
 
 const createPublicationURL = `-- name: CreatePublicationURL :exec
