@@ -8,7 +8,7 @@ templ MainPage(houses []db.House) {
 			if len(houses) == 0 {
 				<p class="empty-state">Aucune maison n'a été ajoutée.</p>
 				<div class="action-buttons">
-					<a href="/maisons/nouvelle" class="button primary">Ajouter une maison</a>
+					<a href="/maison/creer" class="button primary">Ajouter une maison</a>
 				</div>
 			} else {
 				<table class="houses-table sortable">
@@ -33,16 +33,16 @@ templ MainPage(houses []db.House) {
 								<td>{ formatRooms(house.Rooms) }</td>
 								<td>{ formatDate(house.CreatedAt) }</td>
 								<td class="actions">
-									<a href={ templ.SafeURL("/maisons/" + formatID(house.ID)) } class="button small">Voir</a>
-									<a href={ templ.SafeURL("/maisons/" + formatID(house.ID) + "/modifier") } class="button small">Modifier</a>
-									<a href={ templ.SafeURL("/maisons/" + formatID(house.ID) + "/supprimer") } class="button small danger">Supprimer</a>
+									<a href={ templ.SafeURL("/maison/" + formatID(house.ID)) } class="button small">Voir</a>
+									<a href={ templ.SafeURL("/maison/" + formatID(house.ID) + "/modifier") } class="button small">Modifier</a>
+									<a href={ templ.SafeURL("/maison/" + formatID(house.ID) + "/supprimer") } class="button small danger">Supprimer</a>
 								</td>
 							</tr>
 						}
 					</tbody>
 				</table>
 				<div class="action-buttons">
-					<a href="/maisons/nouvelle" class="button primary">Ajouter une maison</a>
+					<a href="/maison/creer" class="button primary">Ajouter une maison</a>
 				</div>
 			}
 		</div>

@@ -44,8 +44,8 @@ templ HousePage(house db.House, publicationURLs []db.PublicationURL, photos []st
 			<div class="house-header">
 				<h3>{ house.Title }</h3>
 				<div class="house-actions">
-					<a href={ templ.SafeURL("/maisons/" + formatID(house.ID) + "/modifier") } class="button">Modifier</a>
-					<a href={ templ.SafeURL("/maisons/" + formatID(house.ID) + "/supprimer") } class="button danger">Supprimer</a>
+					<a href={ templ.SafeURL("/maison/" + formatID(house.ID) + "/modifier") } class="button">Modifier</a>
+					<a href={ templ.SafeURL("/maison/" + formatID(house.ID) + "/supprimer") } class="button danger">Supprimer</a>
 				</div>
 			</div>
 			<div class="house-content">
@@ -54,7 +54,7 @@ templ HousePage(house db.House, publicationURLs []db.PublicationURL, photos []st
 						<div class="photo-gallery">
 							for _, photo := range photos {
 								<div class="photo-item">
-									<img src={ "/maisons/" + formatID(house.ID) + "/uploads/" + photo } alt="Photo"/>
+									<img src={ "/maison/" + formatID(house.ID) + "/uploads/" + photo } alt="Photo"/>
 								</div>
 							}
 						</div>
@@ -127,7 +127,7 @@ templ HousePage(house db.House, publicationURLs []db.PublicationURL, photos []st
 							<ul class="attachments-list">
 								for _, attachment := range attachments {
 									<li>
-										<a href={ templ.URL("/maisons/" + formatID(house.ID) + "/uploads/" + attachment) } target="_blank">
+										<a href={ templ.URL("/maison/" + formatID(house.ID) + "/uploads/" + attachment) } target="_blank">
 											{ attachment }
 										</a>
 									</li>
@@ -144,7 +144,7 @@ templ HousePage(house db.House, publicationURLs []db.PublicationURL, photos []st
 // Create house page
 templ CreateHousePage(cities []db.City) {
 	@Layout("Nouvelle maison") {
-		<form action="/maisons/nouvelle" method="post" enctype="multipart/form-data" class="house-form">
+		<form method="post" enctype="multipart/form-data" class="house-form">
 			@houseFormFields(db.House{}, nil, nil, nil, cities)
 			<div class="form-actions">
 				<button type="submit" class="button primary">Créer</button>
@@ -157,11 +157,11 @@ templ CreateHousePage(cities []db.City) {
 // Modify house page
 templ ModifyHousePage(house db.House, publicationURLs []db.PublicationURL, photos []string, attachments []string, cities []db.City) {
 	@Layout("Modifier la maison") {
-		<form action={ templ.URL("/maisons/" + formatID(house.ID) + "/modifier") } method="post" enctype="multipart/form-data" class="house-form">
+		<form method="post" enctype="multipart/form-data" class="house-form">
 			@houseFormFields(house, publicationURLs, photos, attachments, cities)
 			<div class="form-actions">
 				<button type="submit" class="button primary">Enregistrer</button>
-				<a href={ templ.URL("/maisons/" + formatID(house.ID)) } class="button">Annuler</a>
+				<a href={ templ.URL("/maison/" + formatID(house.ID)) } class="button">Annuler</a>
 			</div>
 		</form>
 	}
@@ -173,10 +173,10 @@ templ DeleteHousePage(house db.House) {
 		<div class="delete-confirmation">
 			<p>Êtes-vous sûre de vouloir supprimer la maison <strong>{ house.Title }</strong> ?</p>
 			<p class="warning">Cette action est irréversible. Toutes les photos et pièces jointes seront également supprimées.</p>
-			<form action={ templ.URL("/maisons/" + formatID(house.ID) + "/supprimer") } method="post">
+			<form action={ templ.URL("/maison/" + formatID(house.ID) + "/supprimer") } method="post">
 				<div class="form-actions">
 					<button type="submit" class="button danger">Supprimer</button>
-					<a href={ templ.URL("/maisons/" + formatID(house.ID)) } class="button">Annuler</a>
+					<a href={ templ.URL("/maison/" + formatID(house.ID)) } class="button">Annuler</a>
 				</div>
 			</form>
 		</div>
@@ -257,10 +257,6 @@ templ houseFormFields(house db.House, publicationURLs []db.PublicationURL, photo
 							<label for="pub_date_0" class="required">Date de publication</label>
 							<input type="date" id="pub_date_0" name="pub_date[]" required/>
 						</div>
-						<div class="form-field checkbox">
-							<input type="checkbox" id="pub_main_0" name="pub_main" value="0" checked/>
-							<label for="pub_main_0">Publication principale</label>
-						</div>
 						<button type="button" class="button small danger remove-publication">Supprimer</button>
 					</div>
 					<input type="hidden" name="pub_id[]" value="0"/>
@@ -278,7 +274,7 @@ templ houseFormFields(house db.House, publicationURLs []db.PublicationURL, photo
 				<div class="photos-grid">
 					for i, photo := range photos {
 						<div class="photo-item">
-							<img src={ "/maisons/" + formatID(house.ID) + "/uploads/" + photo } alt="Photo"/>
+							<img src={ "/maison/" + formatID(house.ID) + "/uploads/" + photo } alt="Photo"/>
 							<div class="photo-actions">
 								<div class="form-field checkbox">
 									<input type="checkbox" id={ "photo_main_" + strconv.Itoa(i) } name="photo_main" value={ photo } checked?={ photo == house.MainPhoto.String }/>
@@ -308,7 +304,7 @@ templ houseFormFields(house db.House, publicationURLs []db.PublicationURL, photo
 				<ul class="attachments-list">
 					for i, attachment := range attachments {
 						<li>
-							<a href={ templ.URL("/maisons/" + formatID(house.ID) + "/uploads/" + attachment) } target="_blank">
+							<a href={ templ.URL("/maison/" + formatID(house.ID) + "/uploads/" + attachment) } target="_blank">
 								{ attachment }
 							</a>
 							<div class="form-field checkbox">

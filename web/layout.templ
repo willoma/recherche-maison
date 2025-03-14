@@ -3,34 +3,34 @@ package web
 templ Layout(title string) {
 	<!DOCTYPE html>
 	<html lang="fr">
-	<head>
-		<meta charset="UTF-8"/>
-		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-		<title>{ title } - Recherche Maison</title>
-		<link rel="stylesheet" href="/style.css"/>
-		<script src="/script.js" defer></script>
-	</head>
-	<body>
-		<div class="app-container">
-			<nav class="sidebar">
-				<div class="sidebar-header">
-					<h1>Recherche Maison</h1>
-				</div>
-				<ul class="sidebar-menu">
-					<li><a href="/">Accueil</a></li>
-					<li><a href="/maisons/nouvelle">Nouvelle maison</a></li>
-					<li><a href="/villes">Gestion des villes</a></li>
-				</ul>
-			</nav>
-			<main class="content">
-				<header class="content-header">
-					<h2>{ title }</h2>
-				</header>
-				<div class="content-body">
-					{ children... }
-				</div>
-			</main>
-		</div>
-	</body>
+		<head>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<title>{ title } - Recherche Maison</title>
+			<link rel="stylesheet" href="/style.css"/>
+			<script src="/script.js" defer></script>
+		</head>
+		<body>
+			<div class="app-container">
+				<nav class="sidebar">
+					<div class="sidebar-header">
+						<h1>Recherche Maison</h1>
+					</div>
+					<ul class="sidebar-menu">
+						<li><a href="/">Accueil</a></li>
+						<li><a href="/maison/creer">Nouvelle maison</a></li>
+						<li><a href="/villes">Gestion des villes</a></li>
+					</ul>
+				</nav>
+				<main class="content">
+					<header class="content-header">
+						<h2>{ title }</h2>
+					</header>
+					<div class="content-body">
+						{ children... }
+					</div>
+				</main>
+			</div>
+		</body>
 	</html>
 }

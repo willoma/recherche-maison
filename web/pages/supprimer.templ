@@ -1,28 +1,26 @@
 package pages
 
 import (
-	"strconv"
 	"github.com/willoma/recherche-maison/db"
 	"github.com/willoma/recherche-maison/web/components"
+	"strconv"
 )
 
 // Supprimer is the delete house confirmation page
 templ Supprimer(house db.House, city db.City, allHouses []db.House) {
-	@components.Layout("Supprimer " + house.Title, allHouses) {
+	@components.Layout("Supprimer "+house.Title, allHouses) {
 		<div class="delete-confirmation">
 			<h1>Supprimer { house.Title }</h1>
 			<p>Êtes-vous sûre de vouloir supprimer cette maison ? Cette action est irréversible.</p>
-			
 			<div class="house-summary">
 				<p><strong>Titre:</strong> { house.Title }</p>
 				<p><strong>Ville:</strong> { city.Name }</p>
 				<p><strong>Prix:</strong> { strconv.FormatInt(house.Price, 10) } €</p>
 			</div>
-			
 			<form method="post">
 				<div class="form-actions">
 					<button type="submit" class="button danger">Confirmer la suppression</button>
-					<a href={ templ.SafeURL("/maisons/" + strconv.FormatInt(house.ID, 10)) } class="button">Annuler</a>
+					<a href={ templ.SafeURL("/maison/" + strconv.FormatInt(house.ID, 10)) } class="button">Annuler</a>
 				</div>
 			</form>
 		</div>

@@ -10,10 +10,8 @@ type Service struct {
 }
 
 // NewService creates a new file service
-func NewService(uploadsDir string) *Service {
-	return &Service{
-		uploadsDir: uploadsDir,
-	}
+func NewService() *Service {
+	return &Service{}
 }
 
 // EnsureHouseDir ensures that the directory for a house exists

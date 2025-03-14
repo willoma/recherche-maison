@@ -7,8 +7,8 @@ import (
 	"github.com/willoma/recherche-maison/web"
 )
 
-// handleMainPage renders the main page with the list of houses
-func (s *Server) handleMainPage(w http.ResponseWriter, r *http.Request) {
+// mainPage renders the main page with the list of houses
+func (s *Server) mainPage(w http.ResponseWriter, r *http.Request) {
 	// Get houses from database
 	houses, err := s.houseService.ListHouses(r.Context())
 	if err != nil {

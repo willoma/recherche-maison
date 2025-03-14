@@ -48,7 +48,7 @@ func MainPage(houses []db.House) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			if len(houses) == 0 {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<p class=\"empty-state\">Aucune maison n'a été ajoutée.</p><div class=\"action-buttons\"><a href=\"/maisons/nouvelle\" class=\"button primary\">Ajouter une maison</a></div>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<p class=\"empty-state\">Aucune maison n'a été ajoutée.</p><div class=\"action-buttons\"><a href=\"/maison/creer\" class=\"button primary\">Ajouter une maison</a></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -140,7 +140,7 @@ func MainPage(houses []db.House) templ.Component {
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					var templ_7745c5c3_Var9 templ.SafeURL = templ.SafeURL("/maisons/" + formatID(house.ID))
+					var templ_7745c5c3_Var9 templ.SafeURL = templ.SafeURL("/maison/" + formatID(house.ID))
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(string(templ_7745c5c3_Var9)))
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
@@ -149,7 +149,7 @@ func MainPage(houses []db.House) templ.Component {
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					var templ_7745c5c3_Var10 templ.SafeURL = templ.SafeURL("/maisons/" + formatID(house.ID) + "/modifier")
+					var templ_7745c5c3_Var10 templ.SafeURL = templ.SafeURL("/maison/" + formatID(house.ID) + "/modifier")
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(string(templ_7745c5c3_Var10)))
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
@@ -158,7 +158,7 @@ func MainPage(houses []db.House) templ.Component {
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					var templ_7745c5c3_Var11 templ.SafeURL = templ.SafeURL("/maisons/" + formatID(house.ID) + "/supprimer")
+					var templ_7745c5c3_Var11 templ.SafeURL = templ.SafeURL("/maison/" + formatID(house.ID) + "/supprimer")
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(string(templ_7745c5c3_Var11)))
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
@@ -168,7 +168,7 @@ func MainPage(houses []db.House) templ.Component {
 						return templ_7745c5c3_Err
 					}
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</tbody></table><div class=\"action-buttons\"><a href=\"/maisons/nouvelle\" class=\"button primary\">Ajouter une maison</a></div>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</tbody></table><div class=\"action-buttons\"><a href=\"/maison/creer\" class=\"button primary\">Ajouter une maison</a></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

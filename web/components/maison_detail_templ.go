@@ -52,7 +52,7 @@ func MaisonDetail(house db.House, city db.City, urls []db.PublicationURL, photos
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var3 templ.SafeURL = templ.SafeURL("/maisons/" + strconv.FormatInt(house.ID, 10) + "/modifier")
+		var templ_7745c5c3_Var3 templ.SafeURL = templ.SafeURL("/maison/" + strconv.FormatInt(house.ID, 10) + "/modifier")
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(string(templ_7745c5c3_Var3)))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -61,7 +61,7 @@ func MaisonDetail(house db.House, city db.City, urls []db.PublicationURL, photos
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var4 templ.SafeURL = templ.SafeURL("/maisons/" + strconv.FormatInt(house.ID, 10) + "/supprimer")
+		var templ_7745c5c3_Var4 templ.SafeURL = templ.SafeURL("/maison/" + strconv.FormatInt(house.ID, 10) + "/supprimer")
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(string(templ_7745c5c3_Var4)))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

@@ -36,20 +36,20 @@ func Layout(title string) templ.Component {
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `layout.templ`, Line: 9, Col: 16}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `layout.templ`, Line: 9, Col: 17}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, " - Recherche Maison</title><link rel=\"stylesheet\" href=\"/style.css\"><script src=\"/script.js\" defer></script></head><body><div class=\"app-container\"><nav class=\"sidebar\"><div class=\"sidebar-header\"><h1>Recherche Maison</h1></div><ul class=\"sidebar-menu\"><li><a href=\"/\">Accueil</a></li><li><a href=\"/maisons/nouvelle\">Nouvelle maison</a></li><li><a href=\"/villes\">Gestion des villes</a></li></ul></nav><main class=\"content\"><header class=\"content-header\"><h2>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, " - Recherche Maison</title><link rel=\"stylesheet\" href=\"/style.css\"><script src=\"/script.js\" defer></script></head><body><div class=\"app-container\"><nav class=\"sidebar\"><div class=\"sidebar-header\"><h1>Recherche Maison</h1></div><ul class=\"sidebar-menu\"><li><a href=\"/\">Accueil</a></li><li><a href=\"/maison/creer\">Nouvelle maison</a></li><li><a href=\"/villes\">Gestion des villes</a></li></ul></nav><main class=\"content\"><header class=\"content-header\"><h2>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `layout.templ`, Line: 27, Col: 16}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `layout.templ`, Line: 27, Col: 17}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {

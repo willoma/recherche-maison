@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/willoma/recherche-maison/config"
 	"github.com/willoma/recherche-maison/core/city"
 	"github.com/willoma/recherche-maison/core/file"
 	"github.com/willoma/recherche-maison/core/house"
@@ -18,57 +19,58 @@ type Server struct {
 	fileService  *file.Service
 	houseService *house.Service
 	cityService  *city.Service
-	uploadsDir   string
-	port         int
 }
 
 // NewServer creates a new HTTP server
-func NewServer(fileService *file.Service, houseService *house.Service, cityService *city.Service, uploadsDir string, port int) *Server {
+func NewServer(fileService *file.Service, houseService *house.Service, cityService *city.Service) *Server {
 	return &Server{
 		fileService:  fileService,
 		houseService: houseService,
 		cityService:  cityService,
-		uploadsDir:   uploadsDir,
-		port:         port,
 	}
 }
 
 // Run starts the HTTP server
-func Run(fileService *file.Service, houseService *house.Service, cityService *city.Service, uploadsDir string, port int) {
-	server := NewServer(fileService, houseService, cityService, uploadsDir, port)
+func Run(fileService *file.Service, houseService *house.Service, cityService *city.Service) {
+	server := NewServer(fileService, houseService, cityService)
 	server.Start()
 }
 
-// Start configures and starts the HTTP server
+// Start starts the HTTP server
 func (s *Server) Start() {
 	mux := http.NewServeMux()
+	s.registerRoutes(mux)
+	s.startServer(mux)
+}
 
+// registerRoutes registers all HTTP routes
+func (s *Server) registerRoutes(mux *http.ServeMux) {
 	// Static files
 	mux.HandleFunc("GET /script.js", static.ServeScript)
 	mux.HandleFunc("GET /style.css", static.ServeStyle)
 
 	// Main page
-	mux.HandleFunc("GET /{$}", s.handleMainPage)
+	mux.HandleFunc("GET /{$}", s.mainPage)
 
 	// House routes
-	mux.HandleFunc("GET /maisons/nouvelle", s.createHousePage)
-	mux.HandleFunc("POST /maisons/nouvelle", s.createHouse)
-	mux.HandleFunc("GET /maisons/{id}/modifier", s.modifyHousePage)
-	mux.HandleFunc("POST /maisons/{id}/modifier", s.modifyHouse)
-	mux.HandleFunc("GET /maisons/{id}/supprimer", s.deleteHousePage)
-	mux.HandleFunc("POST /maisons/{id}/supprimer", s.deleteHouse)
-	mux.HandleFunc("GET /maisons/{id}", s.housePage)
-	mux.HandleFunc("GET /maisons/{id}/photos/{filename}", s.housePhoto)
-	mux.HandleFunc("GET /maisons/{id}/piecesjointes/{filename}", s.houseAttachment)
+	mux.HandleFunc("GET /maison/creer", s.createHousePage)
+	mux.HandleFunc("POST /maison/creer", s.createHouse)
+	mux.HandleFunc("GET /maison/{id}", s.housePage)
+	mux.HandleFunc("GET /maison/{id}/modifier", s.modifyHousePage)
+	mux.HandleFunc("POST /maison/{id}/modifier", s.modifyHouse)
+	mux.HandleFunc("POST /maison/{id}/supprimer", s.deleteHouse)
+	mux.HandleFunc("GET /maison/{id}/photos/{filename}", s.housePhoto)
+	mux.HandleFunc("GET /maison/{id}/piecesjointes/{filename}", s.houseAttachment)
 
 	// City routes
 	mux.HandleFunc("GET /villes", s.modifyCitiesPage)
 	mux.HandleFunc("POST /villes", s.modifyCities)
+}
 
-	// Start server
-	addr := fmt.Sprintf(":%d", s.port)
-	slog.Info("Starting server", "addr", addr)
-	if err := http.ListenAndServe(addr, mux); err != nil && !errors.Is(err, http.ErrServerClosed) {
+// startServer starts the HTTP server
+func (s *Server) startServer(mux *http.ServeMux) {
+	slog.Info("Starting server", "addr", fmt.Sprintf(":%d", config.Port))
+	if err := http.ListenAndServe(":"+fmt.Sprintf("%d", config.Port), mux); err != nil && !errors.Is(err, http.ErrServerClosed) {
 		slog.Error("Server error", "error", err)
 		os.Exit(1)
 	}

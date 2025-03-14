@@ -45,7 +45,7 @@ func Layout(title string, houses []db.House) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, " - Recherche Maison</title><link rel=\"stylesheet\" href=\"/static/style.css\"><script src=\"/static/script.js\" defer></script></head><body><aside><nav><ul><li><a href=\"/\">Résumé</a></li><li><a href=\"/maisons/nouvelle\">Ajouter une maison</a></li><li><a href=\"/villes\">Modifier les villes</a></li><li class=\"separator\">Maisons</li><!-- House links will be rendered here --></ul></nav></aside><main>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, " - Recherche Maison</title><link rel=\"stylesheet\" href=\"/static/style.css\"><script src=\"/static/script.js\" defer></script></head><body><aside><nav><ul><li><a href=\"/\">Résumé</a></li><li><a href=\"/maison/creer\">Ajouter une maison</a></li><li><a href=\"/villes\">Modifier les villes</a></li><li class=\"separator\">Maisons</li><!-- House links will be rendered here --></ul></nav></aside><main>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
