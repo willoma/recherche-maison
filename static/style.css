@@ -18,4 +18,38 @@
   --sidebar-width: 250px;
 }
 
+/* Base styles */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  line-height: 1.6;
+}
+
+/* Required field styling */
+label.required::after {
+  content: " •";
+  color: var(--primary-color);
+  font-weight: bold;
+  font-size: 1.2em;
+  vertical-align: middle;
+  margin-left: 4px;
+}
+
+.form-help {
+  color: var(--text-light);
+  font-size: 0.9em;
+  margin-top: 0;
+  margin-bottom: 1.5em;
+}
+
+.field-help {
+  color: var(--text-light);
+  font-size: 0.85em;
+  margin-top: 0.25em;
+  margin-bottom: 0;
+}
+
 /* Base styles will be implemented later */

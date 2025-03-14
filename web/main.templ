@@ -1,0 +1,50 @@
+package web
+
+import "github.com/willoma/recherche-maison/db"
+
+templ MainPage(houses []db.House) {
+	@Layout("Accueil") {
+		<div class="houses-table-container">
+			if len(houses) == 0 {
+				<p class="empty-state">Aucune maison n'a été ajoutée.</p>
+				<div class="action-buttons">
+					<a href="/maisons/nouvelle" class="button primary">Ajouter une maison</a>
+				</div>
+			} else {
+				<table class="houses-table sortable">
+					<thead>
+						<tr>
+							<th data-sort-by="title">Titre</th>
+							<th data-sort-by="city">Ville</th>
+							<th data-sort-by="price">Prix</th>
+							<th data-sort-by="surface">Surface</th>
+							<th data-sort-by="rooms">Pièces</th>
+							<th data-sort-by="created">Date d'ajout</th>
+							<th>Actions</th>
+						</tr>
+					</thead>
+					<tbody>
+						for _, house := range houses {
+							<tr>
+								<td>{ house.Title }</td>
+								<td>{ house.CityName }</td>
+								<td>{ formatPrice(house.Price) }</td>
+								<td>{ formatSurface(house.Surface) }</td>
+								<td>{ formatRooms(house.Rooms) }</td>
+								<td>{ formatDate(house.CreatedAt) }</td>
+								<td class="actions">
+									<a href={ templ.SafeURL("/maisons/" + formatID(house.ID)) } class="button small">Voir</a>
+									<a href={ templ.SafeURL("/maisons/" + formatID(house.ID) + "/modifier") } class="button small">Modifier</a>
+									<a href={ templ.SafeURL("/maisons/" + formatID(house.ID) + "/supprimer") } class="button small danger">Supprimer</a>
+								</td>
+							</tr>
+						}
+					</tbody>
+				</table>
+				<div class="action-buttons">
+					<a href="/maisons/nouvelle" class="button primary">Ajouter une maison</a>
+				</div>
+			}
+		</div>
+	}
+}

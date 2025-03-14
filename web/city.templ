@@ -1,0 +1,58 @@
+package web
+
+import "github.com/willoma/recherche-maison/db"
+
+// CityManagementPage renders the page for managing cities
+templ CityManagementPage(cities []db.City, usedCities map[int64]bool) {
+	@Layout("Gestion des villes") {
+		<div class="city-management">
+			<div class="cities-list">
+				<h3>Villes existantes</h3>
+				if len(cities) == 0 {
+					<p class="empty-state">Aucune ville n'a été ajoutée.</p>
+				} else {
+					<table class="cities-table">
+						<thead>
+							<tr>
+								<th>Nom</th>
+								<th>Actions</th>
+							</tr>
+						</thead>
+						<tbody>
+							for _, city := range cities {
+								<tr>
+									<td>{ city.Name }</td>
+									<td class="actions">
+										if !usedCities[city.ID] {
+											<form action="/villes" method="post" class="inline-form">
+												<input type="hidden" name="action" value="delete"/>
+												<input type="hidden" name="city_id" value={ formatID(city.ID) }/>
+												<button type="submit" class="button small danger">Supprimer</button>
+											</form>
+										} else {
+											<span class="badge warning">Utilisée</span>
+										}
+									</td>
+								</tr>
+							}
+						</tbody>
+					</table>
+				}
+			</div>
+
+			<div class="city-form-container">
+				<h3>Ajouter une ville</h3>
+				<form action="/villes" method="post" class="city-form">
+					<input type="hidden" name="action" value="create"/>
+					<div class="form-field">
+						<label for="city_name" class="required">Nom de la ville</label>
+						<input type="text" id="city_name" name="city_name" required/>
+					</div>
+					<div class="form-actions">
+						<button type="submit" class="button primary">Ajouter</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	}
+}

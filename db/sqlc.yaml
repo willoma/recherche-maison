@@ -13,3 +13,6 @@ sql:
         initialisms:
           - id
           - url
+        rename:
+          house: DBHouse
+          houses_with_city: House

@@ -13,9 +13,9 @@ import (
 
 const createCity = `-- name: CreateCity :one
 INSERT INTO cities (
-  name
+	name
 ) VALUES (
-  ?
+	?
 )
 RETURNING id, name
 `
@@ -29,24 +29,24 @@ func (q *Queries) CreateCity(ctx context.Context, name string) (City, error) {
 
 const createHouse = `-- name: CreateHouse :one
 INSERT INTO houses (
-  title,
-  city_id,
-  address,
-  price,
-  surface,
-  rooms,
-  bedrooms,
-  bathrooms,
-  floors,
-  construction_year,
-  house_type,
-  land_surface,
-  has_garage,
-  outdoor_parking_spaces,
-  main_photo,
-  notes
+	title,
+	city_id,
+	address,
+	price,
+	surface,
+	rooms,
+	bedrooms,
+	bathrooms,
+	floors,
+	construction_year,
+	house_type,
+	land_surface,
+	has_garage,
+	outdoor_parking_spaces,
+	main_photo,
+	notes
 ) VALUES (
-  ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+	?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
 )
 RETURNING id, created_at, updated_at, title, city_id, address, price, surface, rooms, bedrooms, bathrooms, floors, construction_year, house_type, land_surface, has_garage, outdoor_parking_spaces, main_photo, notes
 `
@@ -57,10 +57,10 @@ type CreateHouseParams struct {
 	Address              sql.NullString
 	Price                int64
 	Surface              int64
-	Rooms                sql.NullInt64
-	Bedrooms             sql.NullInt64
-	Bathrooms            sql.NullInt64
-	Floors               sql.NullInt64
+	Rooms                int64
+	Bedrooms             int64
+	Bathrooms            int64
+	Floors               int64
 	ConstructionYear     sql.NullInt64
 	HouseType            string
 	LandSurface          sql.NullInt64
@@ -70,7 +70,7 @@ type CreateHouseParams struct {
 	Notes                sql.NullString
 }
 
-func (q *Queries) CreateHouse(ctx context.Context, arg CreateHouseParams) (House, error) {
+func (q *Queries) CreateHouse(ctx context.Context, arg CreateHouseParams) (DBHouse, error) {
 	row := q.queryRow(ctx, q.createHouseStmt, createHouse,
 		arg.Title,
 		arg.CityID,
@@ -89,7 +89,7 @@ func (q *Queries) CreateHouse(ctx context.Context, arg CreateHouseParams) (House
 		arg.MainPhoto,
 		arg.Notes,
 	)
-	var i House
+	var i DBHouse
 	err := row.Scan(
 		&i.ID,
 		&i.CreatedAt,
@@ -116,37 +116,29 @@ func (q *Queries) CreateHouse(ctx context.Context, arg CreateHouseParams) (House
 
 const createPublicationURL = `-- name: CreatePublicationURL :one
 INSERT INTO publication_urls (
-  house_id,
-  url,
-  publication_date,
-  is_main
+	house_id,
+	url,
+	publication_date
 ) VALUES (
-  ?, ?, ?, ?
+	?, ?, ?
 )
-RETURNING id, house_id, url, publication_date, is_main
+RETURNING id, house_id, url, publication_date
 `
 
 type CreatePublicationURLParams struct {
 	HouseID         int64
 	URL             string
 	PublicationDate time.Time
-	IsMain          bool
 }
 
 func (q *Queries) CreatePublicationURL(ctx context.Context, arg CreatePublicationURLParams) (PublicationURL, error) {
-	row := q.queryRow(ctx, q.createPublicationURLStmt, createPublicationURL,
-		arg.HouseID,
-		arg.URL,
-		arg.PublicationDate,
-		arg.IsMain,
-	)
+	row := q.queryRow(ctx, q.createPublicationURLStmt, createPublicationURL, arg.HouseID, arg.URL, arg.PublicationDate)
 	var i PublicationURL
 	err := row.Scan(
 		&i.ID,
 		&i.HouseID,
 		&i.URL,
 		&i.PublicationDate,
-		&i.IsMain,
 	)
 	return i, err
 }
@@ -204,7 +196,7 @@ func (q *Queries) GetCity(ctx context.Context, id int64) (City, error) {
 }
 
 const getHouse = `-- name: GetHouse :one
-SELECT id, created_at, updated_at, title, city_id, address, price, surface, rooms, bedrooms, bathrooms, floors, construction_year, house_type, land_surface, has_garage, outdoor_parking_spaces, main_photo, notes FROM houses
+SELECT id, created_at, updated_at, title, city_id, address, price, surface, rooms, bedrooms, bathrooms, floors, construction_year, house_type, land_surface, has_garage, outdoor_parking_spaces, main_photo, notes, city_name FROM houses_with_cities
 WHERE id = ? LIMIT 1
 `
 
@@ -231,33 +223,15 @@ func (q *Queries) GetHouse(ctx context.Context, id int64) (House, error) {
 		&i.OutdoorParkingSpaces,
 		&i.MainPhoto,
 		&i.Notes,
-	)
-	return i, err
-}
-
-const getMainPublicationURL = `-- name: GetMainPublicationURL :one
-SELECT id, house_id, url, publication_date, is_main FROM publication_urls
-WHERE house_id = ? AND is_main = true
-LIMIT 1
-`
-
-func (q *Queries) GetMainPublicationURL(ctx context.Context, houseID int64) (PublicationURL, error) {
-	row := q.queryRow(ctx, q.getMainPublicationURLStmt, getMainPublicationURL, houseID)
-	var i PublicationURL
-	err := row.Scan(
-		&i.ID,
-		&i.HouseID,
-		&i.URL,
-		&i.PublicationDate,
-		&i.IsMain,
+		&i.CityName,
 	)
 	return i, err
 }
 
 const getPublicationURLs = `-- name: GetPublicationURLs :many
-SELECT id, house_id, url, publication_date, is_main FROM publication_urls
+SELECT id, house_id, url, publication_date FROM publication_urls
 WHERE house_id = ?
-ORDER BY is_main DESC, publication_date DESC
+ORDER BY publication_date DESC
 `
 
 func (q *Queries) GetPublicationURLs(ctx context.Context, houseID int64) ([]PublicationURL, error) {
@@ -274,7 +248,6 @@ func (q *Queries) GetPublicationURLs(ctx context.Context, houseID int64) ([]Publ
 			&i.HouseID,
 			&i.URL,
 			&i.PublicationDate,
-			&i.IsMain,
 		); err != nil {
 			return nil, err
 		}
@@ -291,7 +264,7 @@ func (q *Queries) GetPublicationURLs(ctx context.Context, houseID int64) ([]Publ
 
 const isCityUsedByHouses = `-- name: IsCityUsedByHouses :one
 SELECT EXISTS(
-  SELECT 1 FROM houses WHERE city_id = ?
+	SELECT 1 FROM houses WHERE city_id = ?
 ) AS is_used
 `
 
@@ -331,7 +304,7 @@ func (q *Queries) ListCities(ctx context.Context) ([]City, error) {
 }
 
 const listHouses = `-- name: ListHouses :many
-SELECT id, created_at, updated_at, title, city_id, address, price, surface, rooms, bedrooms, bathrooms, floors, construction_year, house_type, land_surface, has_garage, outdoor_parking_spaces, main_photo, notes FROM houses
+SELECT id, created_at, updated_at, title, city_id, address, price, surface, rooms, bedrooms, bathrooms, floors, construction_year, house_type, land_surface, has_garage, outdoor_parking_spaces, main_photo, notes, city_name FROM houses_with_cities
 ORDER BY created_at DESC
 `
 
@@ -364,6 +337,7 @@ func (q *Queries) ListHouses(ctx context.Context) ([]House, error) {
 			&i.OutdoorParkingSpaces,
 			&i.MainPhoto,
 			&i.Notes,
+			&i.CityName,
 		); err != nil {
 			return nil, err
 		}
@@ -394,23 +368,24 @@ func (q *Queries) UpdateCity(ctx context.Context, name string, iD int64) (City, 
 
 const updateHouse = `-- name: UpdateHouse :one
 UPDATE houses
-SET updated_at = CURRENT_TIMESTAMP,
-    title = ?,
-    city_id = ?,
-    address = ?,
-    price = ?,
-    surface = ?,
-    rooms = ?,
-    bedrooms = ?,
-    bathrooms = ?,
-    floors = ?,
-    construction_year = ?,
-    house_type = ?,
-    land_surface = ?,
-    has_garage = ?,
-    outdoor_parking_spaces = ?,
-    main_photo = ?,
-    notes = ?
+SET
+	updated_at = CURRENT_TIMESTAMP,
+	title = ?,
+	city_id = ?,
+	address = ?,
+	price = ?,
+	surface = ?,
+	rooms = ?,
+	bedrooms = ?,
+	bathrooms = ?,
+	floors = ?,
+	construction_year = ?,
+	house_type = ?,
+	land_surface = ?,
+	has_garage = ?,
+	outdoor_parking_spaces = ?,
+	main_photo = ?,
+	notes = ?
 WHERE id = ?
 RETURNING id, created_at, updated_at, title, city_id, address, price, surface, rooms, bedrooms, bathrooms, floors, construction_year, house_type, land_surface, has_garage, outdoor_parking_spaces, main_photo, notes
 `
@@ -421,10 +396,10 @@ type UpdateHouseParams struct {
 	Address              sql.NullString
 	Price                int64
 	Surface              int64
-	Rooms                sql.NullInt64
-	Bedrooms             sql.NullInt64
-	Bathrooms            sql.NullInt64
-	Floors               sql.NullInt64
+	Rooms                int64
+	Bedrooms             int64
+	Bathrooms            int64
+	Floors               int64
 	ConstructionYear     sql.NullInt64
 	HouseType            string
 	LandSurface          sql.NullInt64
@@ -435,7 +410,7 @@ type UpdateHouseParams struct {
 	ID                   int64
 }
 
-func (q *Queries) UpdateHouse(ctx context.Context, arg UpdateHouseParams) (House, error) {
+func (q *Queries) UpdateHouse(ctx context.Context, arg UpdateHouseParams) (DBHouse, error) {
 	row := q.queryRow(ctx, q.updateHouseStmt, updateHouse,
 		arg.Title,
 		arg.CityID,
@@ -455,7 +430,7 @@ func (q *Queries) UpdateHouse(ctx context.Context, arg UpdateHouseParams) (House
 		arg.Notes,
 		arg.ID,
 	)
-	var i House
+	var i DBHouse
 	err := row.Scan(
 		&i.ID,
 		&i.CreatedAt,
@@ -482,34 +457,27 @@ func (q *Queries) UpdateHouse(ctx context.Context, arg UpdateHouseParams) (House
 
 const updatePublicationURL = `-- name: UpdatePublicationURL :one
 UPDATE publication_urls
-SET url = ?,
-    publication_date = ?,
-    is_main = ?
+SET
+	url = ?,
+	publication_date = ?
 WHERE id = ?
-RETURNING id, house_id, url, publication_date, is_main
+RETURNING id, house_id, url, publication_date
 `
 
 type UpdatePublicationURLParams struct {
 	URL             string
 	PublicationDate time.Time
-	IsMain          bool
 	ID              int64
 }
 
 func (q *Queries) UpdatePublicationURL(ctx context.Context, arg UpdatePublicationURLParams) (PublicationURL, error) {
-	row := q.queryRow(ctx, q.updatePublicationURLStmt, updatePublicationURL,
-		arg.URL,
-		arg.PublicationDate,
-		arg.IsMain,
-		arg.ID,
-	)
+	row := q.queryRow(ctx, q.updatePublicationURLStmt, updatePublicationURL, arg.URL, arg.PublicationDate, arg.ID)
 	var i PublicationURL
 	err := row.Scan(
 		&i.ID,
 		&i.HouseID,
 		&i.URL,
 		&i.PublicationDate,
-		&i.IsMain,
 	)
 	return i, err
 }

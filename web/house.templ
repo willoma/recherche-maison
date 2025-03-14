@@ -1,0 +1,329 @@
+package web
+
+import (
+	"strconv"
+	"time"
+
+	"github.com/willoma/recherche-maison/db"
+)
+
+// Helper functions for formatting
+func formatID(id int64) string {
+	return strconv.FormatInt(id, 10)
+}
+
+func formatPrice(price int64) string {
+	if price == 0 {
+		return "-"
+	}
+	return strconv.FormatInt(price, 10) + " €"
+}
+
+func formatSurface(surface int64) string {
+	if surface == 0 {
+		return "-"
+	}
+	return strconv.FormatInt(surface, 10) + " m²"
+}
+
+func formatRooms(rooms int64) string {
+	if rooms == 0 {
+		return "-"
+	}
+	return strconv.FormatInt(rooms, 10)
+}
+
+func formatDate(date time.Time) string {
+	return date.Format("02/01/2006")
+}
+
+// House detail page
+templ HousePage(house db.House, publicationURLs []db.PublicationURL, photos []string, attachments []string) {
+	@Layout(house.Title) {
+		<div class="house-details">
+			<div class="house-header">
+				<h3>{ house.Title }</h3>
+				<div class="house-actions">
+					<a href={ templ.SafeURL("/maisons/" + formatID(house.ID) + "/modifier") } class="button">Modifier</a>
+					<a href={ templ.SafeURL("/maisons/" + formatID(house.ID) + "/supprimer") } class="button danger">Supprimer</a>
+				</div>
+			</div>
+			<div class="house-content">
+				<div class="house-photos">
+					if len(photos) > 0 {
+						<div class="photo-gallery">
+							for _, photo := range photos {
+								<div class="photo-item">
+									<img src={ "/maisons/" + formatID(house.ID) + "/uploads/" + photo } alt="Photo"/>
+								</div>
+							}
+						</div>
+					} else {
+						<p class="empty-state">Aucune photo</p>
+					}
+				</div>
+				<div class="house-info">
+					<div class="info-section">
+						<h4>Informations générales</h4>
+						<table class="info-table">
+							<tr>
+								<th>Ville</th>
+								<td>{ house.CityName }</td>
+							</tr>
+							<tr>
+								<th>Prix</th>
+								<td>{ formatPrice(house.Price) }</td>
+							</tr>
+							<tr>
+								<th>Surface</th>
+								<td>{ formatSurface(house.Surface) }</td>
+							</tr>
+							<tr>
+								<th>Pièces</th>
+								<td>{ formatRooms(house.Rooms) }</td>
+							</tr>
+							<tr>
+								<th>Chambres</th>
+								<td>{ formatRooms(house.Bedrooms) }</td>
+							</tr>
+							<tr>
+								<th>Date d'ajout</th>
+								<td>{ formatDate(house.CreatedAt) }</td>
+							</tr>
+							<tr>
+								<th>Dernière modification</th>
+								<td>{ formatDate(house.UpdatedAt) }</td>
+							</tr>
+						</table>
+					</div>
+					<div class="info-section">
+						<h4>Publications</h4>
+						if len(publicationURLs) > 0 {
+							<ul class="publication-list">
+								for _, pub := range publicationURLs {
+									<li>
+										<a href={ templ.SafeURL(pub.URL) } target="_blank" rel="noopener noreferrer">
+											{ pub.URL }
+										</a>
+										<span class="publication-date">{ formatDate(pub.PublicationDate) }</span>
+									</li>
+								}
+							</ul>
+						} else {
+							<p class="empty-state">Aucune publication</p>
+						}
+					</div>
+					if house.Notes.String != "" {
+						<div class="info-section">
+							<h4>Notes</h4>
+							<div class="notes-content">
+								{ house.Notes.String }
+							</div>
+						</div>
+					}
+					if len(attachments) > 0 {
+						<div class="info-section">
+							<h4>Pièces jointes</h4>
+							<ul class="attachments-list">
+								for _, attachment := range attachments {
+									<li>
+										<a href={ templ.URL("/maisons/" + formatID(house.ID) + "/uploads/" + attachment) } target="_blank">
+											{ attachment }
+										</a>
+									</li>
+								}
+							</ul>
+						</div>
+					}
+				</div>
+			</div>
+		</div>
+	}
+}
+
+// Create house page
+templ CreateHousePage(cities []db.City) {
+	@Layout("Nouvelle maison") {
+		<form action="/maisons/nouvelle" method="post" enctype="multipart/form-data" class="house-form">
+			@houseFormFields(db.House{}, nil, nil, nil, cities)
+			<div class="form-actions">
+				<button type="submit" class="button primary">Créer</button>
+				<a href="/" class="button">Annuler</a>
+			</div>
+		</form>
+	}
+}
+
+// Modify house page
+templ ModifyHousePage(house db.House, publicationURLs []db.PublicationURL, photos []string, attachments []string, cities []db.City) {
+	@Layout("Modifier la maison") {
+		<form action={ templ.URL("/maisons/" + formatID(house.ID) + "/modifier") } method="post" enctype="multipart/form-data" class="house-form">
+			@houseFormFields(house, publicationURLs, photos, attachments, cities)
+			<div class="form-actions">
+				<button type="submit" class="button primary">Enregistrer</button>
+				<a href={ templ.URL("/maisons/" + formatID(house.ID)) } class="button">Annuler</a>
+			</div>
+		</form>
+	}
+}
+
+// Delete house page
+templ DeleteHousePage(house db.House) {
+	@Layout("Supprimer la maison") {
+		<div class="delete-confirmation">
+			<p>Êtes-vous sûre de vouloir supprimer la maison <strong>{ house.Title }</strong> ?</p>
+			<p class="warning">Cette action est irréversible. Toutes les photos et pièces jointes seront également supprimées.</p>
+			<form action={ templ.URL("/maisons/" + formatID(house.ID) + "/supprimer") } method="post">
+				<div class="form-actions">
+					<button type="submit" class="button danger">Supprimer</button>
+					<a href={ templ.URL("/maisons/" + formatID(house.ID)) } class="button">Annuler</a>
+				</div>
+			</form>
+		</div>
+	}
+}
+
+// House form fields (shared between create and modify)
+templ houseFormFields(house db.House, publicationURLs []db.PublicationURL, photos []string, attachments []string, cities []db.City) {
+	<div class="form-section">
+		<h3>Informations générales</h3>
+		<div class="form-field">
+			<label for="title" class="required">Titre</label>
+			<input type="text" id="title" name="title" value={ house.Title } required/>
+		</div>
+		<div class="form-field">
+			<label for="city_id" class="required">Ville</label>
+			<select id="city_id" name="city_id" required>
+				<option value="">-- Sélectionner une ville --</option>
+				for _, city := range cities {
+					<option value={ formatID(city.ID) } selected?={ city.ID == house.CityID }>{ city.Name }</option>
+				}
+			</select>
+		</div>
+		<div class="form-row">
+			<div class="form-field">
+				<label for="price" class="required">Prix (€)</label>
+				<input type="number" id="price" name="price" value={ strconv.FormatInt(house.Price, 10) } min="0" required/>
+			</div>
+			<div class="form-field">
+				<label for="surface" class="required">Surface (m²)</label>
+				<input type="number" id="surface" name="surface" value={ strconv.FormatInt(house.Surface, 10) } min="0" required/>
+			</div>
+		</div>
+		<div class="form-row">
+			<div class="form-field">
+				<label for="rooms" class="required">Pièces</label>
+				<input type="number" id="rooms" name="rooms" value={ strconv.FormatInt(house.Rooms, 10) } min="0" required/>
+			</div>
+			<div class="form-field">
+				<label for="bedrooms" class="required">Chambres</label>
+				<input type="number" id="bedrooms" name="bedrooms" value={ strconv.FormatInt(house.Bedrooms, 10) } min="0" required/>
+			</div>
+		</div>
+		<div class="form-field">
+			<label for="notes">Notes</label>
+			<textarea id="notes" name="notes" rows="4">{ house.Notes.String }</textarea>
+		</div>
+	</div>
+	<div class="form-section">
+		<h3>Publications</h3>
+		<p class="form-help">Au moins une publication est requise.</p>
+		<div id="publications-container">
+			if publicationURLs != nil && len(publicationURLs) > 0 {
+				for i, pub := range publicationURLs {
+					<div class="publication-item">
+						<div class="form-row">
+							<div class="form-field">
+								<label for={ "pub_url_" + strconv.Itoa(i) } class="required">URL</label>
+								<input type="url" id={ "pub_url_" + strconv.Itoa(i) } name="pub_url[]" value={ pub.URL } required/>
+							</div>
+							<div class="form-field">
+								<label for={ "pub_date_" + strconv.Itoa(i) } class="required">Date de publication</label>
+								<input type="date" id={ "pub_date_" + strconv.Itoa(i) } name="pub_date[]" value={ pub.PublicationDate.Format("2006-01-02") } required/>
+							</div>
+							<button type="button" class="button small danger remove-publication">Supprimer</button>
+						</div>
+						<input type="hidden" name="pub_id[]" value={ formatID(pub.ID) }/>
+					</div>
+				}
+			} else {
+				<div class="publication-item">
+					<div class="form-row">
+						<div class="form-field">
+							<label for="pub_url_0" class="required">URL</label>
+							<input type="url" id="pub_url_0" name="pub_url[]" required/>
+						</div>
+						<div class="form-field">
+							<label for="pub_date_0" class="required">Date de publication</label>
+							<input type="date" id="pub_date_0" name="pub_date[]" required/>
+						</div>
+						<div class="form-field checkbox">
+							<input type="checkbox" id="pub_main_0" name="pub_main" value="0" checked/>
+							<label for="pub_main_0">Publication principale</label>
+						</div>
+						<button type="button" class="button small danger remove-publication">Supprimer</button>
+					</div>
+					<input type="hidden" name="pub_id[]" value="0"/>
+				</div>
+			}
+		</div>
+		<button type="button" id="add-publication" class="button small">Ajouter une publication</button>
+	</div>
+	<div class="form-section">
+		<h3>Photos</h3>
+		<p class="form-help">Au moins une photo est requise.</p>
+		if photos != nil && len(photos) > 0 {
+			<div class="current-photos">
+				<h4>Photos actuelles</h4>
+				<div class="photos-grid">
+					for i, photo := range photos {
+						<div class="photo-item">
+							<img src={ "/maisons/" + formatID(house.ID) + "/uploads/" + photo } alt="Photo"/>
+							<div class="photo-actions">
+								<div class="form-field checkbox">
+									<input type="checkbox" id={ "photo_main_" + strconv.Itoa(i) } name="photo_main" value={ photo } checked?={ photo == house.MainPhoto.String }/>
+									<label for={ "photo_main_" + strconv.Itoa(i) }>Photo principale</label>
+								</div>
+								<div class="form-field checkbox">
+									<input type="checkbox" id={ "photo_delete_" + strconv.Itoa(i) } name="photo_delete[]" value={ photo }/>
+									<label for={ "photo_delete_" + strconv.Itoa(i) }>Supprimer</label>
+								</div>
+							</div>
+						</div>
+					}
+				</div>
+			</div>
+		}
+		<div class="form-field">
+			<label for="photos" class="required">Ajouter des photos</label>
+			<input type="file" id="photos" name="photos[]" multiple accept="image/*" required?={ photos == nil || len(photos) == 0 }/>
+			<p class="field-help">Vous pouvez sélectionner plusieurs photos à la fois.</p>
+		</div>
+	</div>
+	<div class="form-section">
+		<h3>Pièces jointes</h3>
+		if attachments != nil && len(attachments) > 0 {
+			<div class="current-attachments">
+				<h4>Pièces jointes actuelles</h4>
+				<ul class="attachments-list">
+					for i, attachment := range attachments {
+						<li>
+							<a href={ templ.URL("/maisons/" + formatID(house.ID) + "/uploads/" + attachment) } target="_blank">
+								{ attachment }
+							</a>
+							<div class="form-field checkbox">
+								<input type="checkbox" id={ "attachment_delete_" + strconv.Itoa(i) } name="attachment_delete[]" value={ attachment }/>
+								<label for={ "attachment_delete_" + strconv.Itoa(i) }>Supprimer</label>
+							</div>
+						</li>
+					}
+				</ul>
+			</div>
+		}
+		<div class="form-field">
+			<label for="attachments">Ajouter des pièces jointes</label>
+			<input type="file" id="attachments" name="attachments[]" multiple/>
+			<p class="field-help">Vous pouvez sélectionner plusieurs fichiers à la fois.</p>
+		</div>
+	</div>
+}

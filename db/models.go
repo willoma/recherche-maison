@@ -14,7 +14,7 @@ type City struct {
 	Name string
 }
 
-type House struct {
+type DBHouse struct {
 	ID                   int64
 	CreatedAt            time.Time
 	UpdatedAt            time.Time
@@ -23,10 +23,10 @@ type House struct {
 	Address              sql.NullString
 	Price                int64
 	Surface              int64
-	Rooms                sql.NullInt64
-	Bedrooms             sql.NullInt64
-	Bathrooms            sql.NullInt64
-	Floors               sql.NullInt64
+	Rooms                int64
+	Bedrooms             int64
+	Bathrooms            int64
+	Floors               int64
 	ConstructionYear     sql.NullInt64
 	HouseType            string
 	LandSurface          sql.NullInt64
@@ -36,10 +36,32 @@ type House struct {
 	Notes                sql.NullString
 }
 
+type House struct {
+	ID                   int64
+	CreatedAt            time.Time
+	UpdatedAt            time.Time
+	Title                string
+	CityID               int64
+	Address              sql.NullString
+	Price                int64
+	Surface              int64
+	Rooms                int64
+	Bedrooms             int64
+	Bathrooms            int64
+	Floors               int64
+	ConstructionYear     sql.NullInt64
+	HouseType            string
+	LandSurface          sql.NullInt64
+	HasGarage            sql.NullBool
+	OutdoorParkingSpaces sql.NullInt64
+	MainPhoto            sql.NullString
+	Notes                sql.NullString
+	CityName             string
+}
+
 type PublicationURL struct {
 	ID              int64
 	HouseID         int64
 	URL             string
 	PublicationDate time.Time
-	IsMain          bool
 }

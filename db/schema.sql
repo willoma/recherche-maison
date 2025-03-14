@@ -12,10 +12,10 @@ CREATE TABLE IF NOT EXISTS houses (
     address TEXT,
     price INTEGER NOT NULL,
     surface INTEGER NOT NULL,
-    rooms INTEGER,
-    bedrooms INTEGER,
-    bathrooms INTEGER,
-    floors INTEGER,
+    rooms INTEGER NOT NULL,
+    bedrooms INTEGER NOT NULL,
+    bathrooms INTEGER NOT NULL,
+    floors INTEGER NOT NULL,
     construction_year INTEGER,
     house_type TEXT NOT NULL, -- 'maison' or 'appartement'
     land_surface INTEGER,
@@ -25,10 +25,14 @@ CREATE TABLE IF NOT EXISTS houses (
     notes TEXT
 );
 
+CREATE VIEW IF NOT EXISTS houses_with_cities
+AS SELECT houses.*, cities.name AS city_name
+FROM houses
+JOIN cities ON houses.city_id = cities.id;
+
 CREATE TABLE IF NOT EXISTS publication_urls (
     id INTEGER PRIMARY KEY,
     house_id INTEGER NOT NULL REFERENCES houses(id) ON DELETE CASCADE,
     url TEXT NOT NULL,
-    publication_date DATE NOT NULL,
-    is_main BOOLEAN NOT NULL
+    publication_date DATE NOT NULL
 );

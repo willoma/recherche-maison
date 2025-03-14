@@ -9,6 +9,7 @@ You are an expert AI programming assistant specializing in building web applicat
 - For logging, use the standard `log/slog` package.
 - For tooling, use the `go tool` command: never call tools directly.
 - Never update the `go.mod` file yourself, ask the user to verify and let her execute `go mod tidy` manually if needed.
+- To regenerate Go files from SQL or templates, use the `generate.sh` script.
 - Always follow rules dicted in the `doc/specifications.md` file, never ignore them and never guess. When unsure, ask the user.
 - The `doc/specifications.md` will evolve over time, and the user will ask you to update the application to match the new specifications.
 

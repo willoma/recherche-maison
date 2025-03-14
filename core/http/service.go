@@ -58,7 +58,8 @@ func (s *Server) Start() {
 	mux.HandleFunc("GET /maisons/{id}/supprimer", s.deleteHousePage)
 	mux.HandleFunc("POST /maisons/{id}/supprimer", s.deleteHouse)
 	mux.HandleFunc("GET /maisons/{id}", s.housePage)
-	mux.HandleFunc("GET /maisons/{id}/uploads/{filename}", s.houseFile)
+	mux.HandleFunc("GET /maisons/{id}/photos/{filename}", s.housePhoto)
+	mux.HandleFunc("GET /maisons/{id}/piecesjointes/{filename}", s.houseAttachment)
 
 	// City routes
 	mux.HandleFunc("GET /villes", s.modifyCitiesPage)

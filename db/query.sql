@@ -8,9 +8,9 @@ ORDER BY name;
 
 -- name: CreateCity :one
 INSERT INTO cities (
-  name
+	name
 ) VALUES (
-  ?
+	?
 )
 RETURNING *;
 
@@ -26,59 +26,60 @@ WHERE id = ?;
 
 -- name: IsCityUsedByHouses :one
 SELECT EXISTS(
-  SELECT 1 FROM houses WHERE city_id = ?
+	SELECT 1 FROM houses WHERE city_id = ?
 ) AS is_used;
 
 -- name: GetHouse :one
-SELECT * FROM houses
+SELECT * FROM houses_with_cities
 WHERE id = ? LIMIT 1;
 
 -- name: ListHouses :many
-SELECT * FROM houses
+SELECT * FROM houses_with_cities
 ORDER BY created_at DESC;
 
 -- name: CreateHouse :one
 INSERT INTO houses (
-  title,
-  city_id,
-  address,
-  price,
-  surface,
-  rooms,
-  bedrooms,
-  bathrooms,
-  floors,
-  construction_year,
-  house_type,
-  land_surface,
-  has_garage,
-  outdoor_parking_spaces,
-  main_photo,
-  notes
+	title,
+	city_id,
+	address,
+	price,
+	surface,
+	rooms,
+	bedrooms,
+	bathrooms,
+	floors,
+	construction_year,
+	house_type,
+	land_surface,
+	has_garage,
+	outdoor_parking_spaces,
+	main_photo,
+	notes
 ) VALUES (
-  ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+	?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
 )
 RETURNING *;
 
 -- name: UpdateHouse :one
 UPDATE houses
-SET updated_at = CURRENT_TIMESTAMP,
-    title = ?,
-    city_id = ?,
-    address = ?,
-    price = ?,
-    surface = ?,
-    rooms = ?,
-    bedrooms = ?,
-    bathrooms = ?,
-    floors = ?,
-    construction_year = ?,
-    house_type = ?,
-    land_surface = ?,
-    has_garage = ?,
-    outdoor_parking_spaces = ?,
-    main_photo = ?,
-    notes = ?
+SET
+	updated_at = CURRENT_TIMESTAMP,
+	title = ?,
+	city_id = ?,
+	address = ?,
+	price = ?,
+	surface = ?,
+	rooms = ?,
+	bedrooms = ?,
+	bathrooms = ?,
+	floors = ?,
+	construction_year = ?,
+	house_type = ?,
+	land_surface = ?,
+	has_garage = ?,
+	outdoor_parking_spaces = ?,
+	main_photo = ?,
+	notes = ?
 WHERE id = ?
 RETURNING *;
 
@@ -89,29 +90,23 @@ WHERE id = ?;
 -- name: GetPublicationURLs :many
 SELECT * FROM publication_urls
 WHERE house_id = ?
-ORDER BY is_main DESC, publication_date DESC;
-
--- name: GetMainPublicationURL :one
-SELECT * FROM publication_urls
-WHERE house_id = ? AND is_main = true
-LIMIT 1;
+ORDER BY publication_date DESC;
 
 -- name: CreatePublicationURL :one
 INSERT INTO publication_urls (
-  house_id,
-  url,
-  publication_date,
-  is_main
+	house_id,
+	url,
+	publication_date
 ) VALUES (
-  ?, ?, ?, ?
+	?, ?, ?
 )
 RETURNING *;
 
 -- name: UpdatePublicationURL :one
 UPDATE publication_urls
-SET url = ?,
-    publication_date = ?,
-    is_main = ?
+SET
+	url = ?,
+	publication_date = ?
 WHERE id = ?
 RETURNING *;
 

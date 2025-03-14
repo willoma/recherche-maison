@@ -51,9 +51,6 @@ func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	if q.getHouseStmt, err = db.PrepareContext(ctx, getHouse); err != nil {
 		return nil, fmt.Errorf("error preparing query GetHouse: %w", err)
 	}
-	if q.getMainPublicationURLStmt, err = db.PrepareContext(ctx, getMainPublicationURL); err != nil {
-		return nil, fmt.Errorf("error preparing query GetMainPublicationURL: %w", err)
-	}
 	if q.getPublicationURLsStmt, err = db.PrepareContext(ctx, getPublicationURLs); err != nil {
 		return nil, fmt.Errorf("error preparing query GetPublicationURLs: %w", err)
 	}
@@ -123,11 +120,6 @@ func (q *Queries) Close() error {
 	if q.getHouseStmt != nil {
 		if cerr := q.getHouseStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing getHouseStmt: %w", cerr)
-		}
-	}
-	if q.getMainPublicationURLStmt != nil {
-		if cerr := q.getMainPublicationURLStmt.Close(); cerr != nil {
-			err = fmt.Errorf("error closing getMainPublicationURLStmt: %w", cerr)
 		}
 	}
 	if q.getPublicationURLsStmt != nil {
@@ -213,7 +205,6 @@ type Queries struct {
 	deletePublicationURLStmt     *sql.Stmt
 	getCityStmt                  *sql.Stmt
 	getHouseStmt                 *sql.Stmt
-	getMainPublicationURLStmt    *sql.Stmt
 	getPublicationURLsStmt       *sql.Stmt
 	isCityUsedByHousesStmt       *sql.Stmt
 	listCitiesStmt               *sql.Stmt
@@ -236,7 +227,6 @@ func (q *Queries) WithTx(tx *sql.Tx) *Queries {
 		deletePublicationURLStmt:     q.deletePublicationURLStmt,
 		getCityStmt:                  q.getCityStmt,
 		getHouseStmt:                 q.getHouseStmt,
-		getMainPublicationURLStmt:    q.getMainPublicationURLStmt,
 		getPublicationURLsStmt:       q.getPublicationURLsStmt,
 		isCityUsedByHousesStmt:       q.isCityUsedByHousesStmt,
 		listCitiesStmt:               q.listCitiesStmt,
