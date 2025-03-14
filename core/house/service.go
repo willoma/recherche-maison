@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/willoma/recherche-maison/db"
+	"github.com/willoma/recherche-maison/models"
 )
 
 // Service provides methods for managing houses
@@ -21,26 +22,35 @@ func NewService(queries *db.Queries) *Service {
 }
 
 // GetHouse retrieves a house by ID
-func (s *Service) GetHouse(ctx context.Context, id int64) (db.House, error) {
+func (s *Service) GetHouse(ctx context.Context, id int64) (models.House, error) {
 	// To be implemented
-	return db.House{}, nil
+	dbHouse := db.House{}
+	return models.FromDBHouse(dbHouse), nil
 }
 
 // ListHouses retrieves all houses
-func (s *Service) ListHouses(ctx context.Context) ([]db.House, error) {
+func (s *Service) ListHouses(ctx context.Context) ([]models.House, error) {
 	// To be implemented
-	return nil, nil
+	var houses []models.House
+	return houses, nil
 }
 
 // CreateHouse creates a new house
-func (s *Service) CreateHouse(ctx context.Context, params db.CreateHouseParams) (int64, error) {
-	// To be implemented
+func (s *Service) CreateHouse(ctx context.Context, house models.House) (int64, error) {
+	// Convert to db model and create
+	dbParams := house.ToCreateHouseParams()
+	// To be implemented - using dbParams in the actual implementation
+	_ = dbParams // Temporary to avoid unused variable warning
 	return 0, nil
 }
 
 // UpdateHouse updates an existing house
-func (s *Service) UpdateHouse(ctx context.Context, params db.UpdateHouseParams) error {
-	// To be implemented
+func (s *Service) UpdateHouse(ctx context.Context, id int64, house models.House) error {
+	// Convert to db model and update
+	house.ID = id
+	dbParams := house.ToUpdateHouseParams()
+	// To be implemented - using dbParams in the actual implementation
+	_ = dbParams // Temporary to avoid unused variable warning
 	return nil
 }
 
@@ -51,9 +61,10 @@ func (s *Service) DeleteHouse(ctx context.Context, id int64) error {
 }
 
 // GetPublicationURLs retrieves all publication URLs for a house
-func (s *Service) GetPublicationURLs(ctx context.Context, houseID int64) ([]db.PublicationURL, error) {
+func (s *Service) GetPublicationURLs(ctx context.Context, houseID int64) ([]models.PublicationURL, error) {
 	// To be implemented
-	return nil, nil
+	var publicationURLs []models.PublicationURL
+	return publicationURLs, nil
 }
 
 // AddPublicationURL adds a new publication URL for a house
@@ -63,8 +74,11 @@ func (s *Service) AddPublicationURL(ctx context.Context, houseID int64, url stri
 }
 
 // UpdatePublicationURL updates an existing publication URL
-func (s *Service) UpdatePublicationURL(ctx context.Context, params db.UpdatePublicationURLParams) error {
-	// To be implemented
+func (s *Service) UpdatePublicationURL(ctx context.Context, params models.UpdatePublicationURLParams) error {
+	// Convert to db model and update
+	dbParams := params.ToUpdatePublicationURLParams()
+	// To be implemented - using dbParams in the actual implementation
+	_ = dbParams // Temporary to avoid unused variable warning
 	return nil
 }
 

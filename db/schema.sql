@@ -9,20 +9,20 @@ CREATE TABLE IF NOT EXISTS houses (
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     title TEXT NOT NULL,
     city_id INTEGER NOT NULL REFERENCES cities(id) ON DELETE RESTRICT,
-    address TEXT,
+    address TEXT NOT NULL DEFAULT '',
     price INTEGER NOT NULL,
     surface INTEGER NOT NULL,
     rooms INTEGER NOT NULL,
     bedrooms INTEGER NOT NULL,
     bathrooms INTEGER NOT NULL,
     floors INTEGER NOT NULL,
-    construction_year INTEGER,
+    construction_year INTEGER NOT NULL DEFAULT 0,
     house_type TEXT NOT NULL, -- 'maison' or 'appartement'
-    land_surface INTEGER,
-    has_garage BOOLEAN,
-    outdoor_parking_spaces INTEGER,
-    main_photo TEXT, -- filename of the main photo
-    notes TEXT
+    land_surface INTEGER NOT NULL DEFAULT 0,
+    has_garage BOOLEAN NOT NULL DEFAULT FALSE,
+    outdoor_parking_spaces INTEGER NOT NULL DEFAULT 0,
+    main_photo TEXT NOT NULL DEFAULT '', -- filename of the main photo
+    notes TEXT NOT NULL DEFAULT ''
 );
 
 CREATE TABLE IF NOT EXISTS publication_urls (
@@ -38,5 +38,4 @@ FROM cities;
 
 CREATE VIEW IF NOT EXISTS houses_with_cities
 AS SELECT houses.*, cities.name AS city_name
-FROM houses
-JOIN cities ON houses.city_id = cities.id;
+FROM houses JOIN cities ON houses.city_id = cities.id;

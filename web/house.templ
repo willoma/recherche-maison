@@ -1,10 +1,9 @@
 package web
 
 import (
+	"github.com/willoma/recherche-maison/models"
 	"strconv"
 	"time"
-
-	"github.com/willoma/recherche-maison/db"
 )
 
 // Helper functions for formatting
@@ -38,7 +37,7 @@ func formatDate(date time.Time) string {
 }
 
 // House detail page
-templ HousePage(house db.House, publicationURLs []db.PublicationURL, photos []string, attachments []string) {
+templ HousePage(house models.House, publicationURLs []models.PublicationURL, photos []string, attachments []string) {
 	@Layout(house.Title) {
 		<div class="house-details">
 			<div class="house-header">
@@ -113,11 +112,11 @@ templ HousePage(house db.House, publicationURLs []db.PublicationURL, photos []st
 							<p class="empty-state">Aucune publication</p>
 						}
 					</div>
-					if house.Notes.String != "" {
+					if house.Notes != "" {
 						<div class="info-section">
 							<h4>Notes</h4>
 							<div class="notes-content">
-								{ house.Notes.String }
+								{ house.Notes }
 							</div>
 						</div>
 					}
@@ -142,10 +141,10 @@ templ HousePage(house db.House, publicationURLs []db.PublicationURL, photos []st
 }
 
 // Create house page
-templ CreateHousePage(cities []db.City) {
+templ CreateHousePage(cities []models.City) {
 	@Layout("Nouvelle maison") {
 		<form method="post" enctype="multipart/form-data" class="house-form">
-			@houseFormFields(db.House{}, nil, nil, nil, cities)
+			@houseFormFields(models.House{}, nil, nil, nil, cities)
 			<div class="form-actions">
 				<button type="submit" class="button primary">Créer</button>
 				<a href="/" class="button">Annuler</a>
@@ -155,7 +154,7 @@ templ CreateHousePage(cities []db.City) {
 }
 
 // Modify house page
-templ ModifyHousePage(house db.House, publicationURLs []db.PublicationURL, photos []string, attachments []string, cities []db.City) {
+templ ModifyHousePage(house models.House, publicationURLs []models.PublicationURL, photos []string, attachments []string, cities []models.City) {
 	@Layout("Modifier la maison") {
 		<form method="post" enctype="multipart/form-data" class="house-form">
 			@houseFormFields(house, publicationURLs, photos, attachments, cities)
@@ -168,7 +167,7 @@ templ ModifyHousePage(house db.House, publicationURLs []db.PublicationURL, photo
 }
 
 // Delete house page
-templ DeleteHousePage(house db.House) {
+templ DeleteHousePage(house models.House) {
 	@Layout("Supprimer la maison") {
 		<div class="delete-confirmation">
 			<p>Êtes-vous sûre de vouloir supprimer la maison <strong>{ house.Title }</strong> ?</p>
@@ -184,7 +183,7 @@ templ DeleteHousePage(house db.House) {
 }
 
 // House form fields (shared between create and modify)
-templ houseFormFields(house db.House, publicationURLs []db.PublicationURL, photos []string, attachments []string, cities []db.City) {
+templ houseFormFields(house models.House, publicationURLs []models.PublicationURL, photos []string, attachments []string, cities []models.City) {
 	<div class="form-section">
 		<h3>Informations générales</h3>
 		<div class="form-field">
@@ -222,52 +221,33 @@ templ houseFormFields(house db.House, publicationURLs []db.PublicationURL, photo
 		</div>
 		<div class="form-field">
 			<label for="notes">Notes</label>
-			<textarea id="notes" name="notes" rows="4">{ house.Notes.String }</textarea>
+			<textarea id="notes" name="notes" rows="4">{ house.Notes }</textarea>
 		</div>
 	</div>
 	<div class="form-section">
-		<h3>Publications</h3>
-		<p class="form-help">Au moins une publication est requise.</p>
+		<h3>Annonces</h3>
 		<div id="publications-container">
-			if publicationURLs != nil && len(publicationURLs) > 0 {
-				for i, pub := range publicationURLs {
-					<div class="publication-item">
-						<div class="form-row">
-							<div class="form-field">
-								<label for={ "pub_url_" + strconv.Itoa(i) } class="required">URL</label>
-								<input type="url" id={ "pub_url_" + strconv.Itoa(i) } name="pub_url[]" value={ pub.URL } required/>
-							</div>
-							<div class="form-field">
-								<label for={ "pub_date_" + strconv.Itoa(i) } class="required">Date de publication</label>
-								<input type="date" id={ "pub_date_" + strconv.Itoa(i) } name="pub_date[]" value={ pub.PublicationDate.Format("2006-01-02") } required/>
-							</div>
-							<button type="button" class="button small danger remove-publication">Supprimer</button>
-						</div>
-						<input type="hidden" name="pub_id[]" value={ formatID(pub.ID) }/>
-					</div>
-				}
-			} else {
+			for i, pub := range publicationURLs {
 				<div class="publication-item">
 					<div class="form-row">
 						<div class="form-field">
-							<label for="pub_url_0" class="required">URL</label>
-							<input type="url" id="pub_url_0" name="pub_url[]" required/>
+							<label for={ "pub_url_" + strconv.Itoa(i) } class="required">URL</label>
+							<input type="url" id={ "pub_url_" + strconv.Itoa(i) } name="pub_url[]" value={ pub.URL } required/>
 						</div>
 						<div class="form-field">
-							<label for="pub_date_0" class="required">Date de publication</label>
-							<input type="date" id="pub_date_0" name="pub_date[]" required/>
+							<label for={ "pub_date_" + strconv.Itoa(i) } class="required">Date de publication</label>
+							<input type="date" id={ "pub_date_" + strconv.Itoa(i) } name="pub_date[]" value={ pub.PublicationDate.Format("2006-01-02") } required/>
 						</div>
 						<button type="button" class="button small danger remove-publication">Supprimer</button>
 					</div>
-					<input type="hidden" name="pub_id[]" value="0"/>
+					<input type="hidden" name="pub_id[]" value={ formatID(pub.ID) }/>
 				</div>
 			}
 		</div>
-		<button type="button" id="add-publication" class="button small">Ajouter une publication</button>
+		<button type="button" id="add-publication" class="button small">Ajouter un lien vers une annonce</button>
 	</div>
 	<div class="form-section">
 		<h3>Photos</h3>
-		<p class="form-help">Au moins une photo est requise.</p>
 		if photos != nil && len(photos) > 0 {
 			<div class="current-photos">
 				<h4>Photos actuelles</h4>
@@ -277,7 +257,7 @@ templ houseFormFields(house db.House, publicationURLs []db.PublicationURL, photo
 							<img src={ "/maison/" + formatID(house.ID) + "/uploads/" + photo } alt="Photo"/>
 							<div class="photo-actions">
 								<div class="form-field checkbox">
-									<input type="checkbox" id={ "photo_main_" + strconv.Itoa(i) } name="photo_main" value={ photo } checked?={ photo == house.MainPhoto.String }/>
+									<input type="checkbox" id={ "photo_main_" + strconv.Itoa(i) } name="photo_main" value={ photo } checked?={ photo == house.MainPhoto }/>
 									<label for={ "photo_main_" + strconv.Itoa(i) }>Photo principale</label>
 								</div>
 								<div class="form-field checkbox">
@@ -291,8 +271,8 @@ templ houseFormFields(house db.House, publicationURLs []db.PublicationURL, photo
 			</div>
 		}
 		<div class="form-field">
-			<label for="photos" class="required">Ajouter des photos</label>
-			<input type="file" id="photos" name="photos[]" multiple accept="image/*" required?={ photos == nil || len(photos) == 0 }/>
+			<label for="photos">Ajouter des photos</label>
+			<input type="file" id="photos" name="photos[]" multiple accept="image/*"/>
 			<p class="field-help">Vous pouvez sélectionner plusieurs photos à la fois.</p>
 		</div>
 	</div>

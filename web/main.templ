@@ -1,8 +1,8 @@
 package web
 
-import "github.com/willoma/recherche-maison/db"
+import "github.com/willoma/recherche-maison/models"
 
-templ MainPage(houses []db.House) {
+templ MainPage(houses []models.House) {
 	@Layout("Accueil") {
 		<div class="houses-table-container">
 			if len(houses) == 0 {

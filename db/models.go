@@ -5,7 +5,6 @@
 package db
 
 import (
-	"database/sql"
 	"time"
 )
 
@@ -21,20 +20,20 @@ type House struct {
 	UpdatedAt            time.Time
 	Title                string
 	CityID               int64
-	Address              sql.NullString
+	Address              string
 	Price                int64
 	Surface              int64
 	Rooms                int64
 	Bedrooms             int64
 	Bathrooms            int64
 	Floors               int64
-	ConstructionYear     sql.NullInt64
+	ConstructionYear     int64
 	HouseType            string
-	LandSurface          sql.NullInt64
-	HasGarage            sql.NullBool
-	OutdoorParkingSpaces sql.NullInt64
-	MainPhoto            sql.NullString
-	Notes                sql.NullString
+	LandSurface          int64
+	HasGarage            bool
+	OutdoorParkingSpaces int64
+	MainPhoto            string
+	Notes                string
 	CityName             string
 }
 

@@ -12,8 +12,8 @@ There is no need for authentication, users management, etc.
   - Creation date (automatic field)
   - Last update date (automatic field)
   - Title (mandatory, one-line text)
-  - Publication URLs (at least one is mandatory, multiple URLs are allowed)
-  - Publication date (one for each publication URL, mandatory, date with a calendar picker)
+  - Publication URLs (optional, multiple URLs are allowed)
+  - Publication date (mandatory for each publication URL, date with a calendar picker)
   - City (mandatory, selected in a pre-defined list)
   - Address (optional, free text)
   - Price, in euros (mandatory, integer number)
@@ -27,7 +27,7 @@ There is no need for authentication, users management, etc.
   - Total surface of the land (optional, integer number, in square meters)
   - Garage (optional, binary)
   - Number of outdoor parking spaces (optional, integer number)
-  - Photos (at least one is mandatory, multiple files are allowed, one must be marked as the manually selected main photo)
+  - Photos (optional, multiple files are allowed, one must be marked as the manually selected main photo)
   - Notes (optional, free text)
   - Other attached files (optional, multiple files are allowed)
 
@@ -56,3 +56,4 @@ All pages should have a menu fixed on the left side, to navigate between the dif
 ## Technical details
 
 - Photos and attachments will be stored in subdirectories of an `uploads` directory, each subdirectory named after its house id, which will only be created on first run if it does not already exist. These files will be searched for directly on the filesystem, without any entry or table in the database. Only the main photo selection should appear in the database.
+- Optional fields are stored in the database as the zero value of the type, not as nullable fields.

@@ -7,7 +7,6 @@ package db
 
 import (
 	"context"
-	"database/sql"
 	"time"
 )
 
@@ -51,20 +50,20 @@ INSERT INTO houses (
 type CreateHouseParams struct {
 	Title                string
 	CityID               int64
-	Address              sql.NullString
+	Address              string
 	Price                int64
 	Surface              int64
 	Rooms                int64
 	Bedrooms             int64
 	Bathrooms            int64
 	Floors               int64
-	ConstructionYear     sql.NullInt64
+	ConstructionYear     int64
 	HouseType            string
-	LandSurface          sql.NullInt64
-	HasGarage            sql.NullBool
-	OutdoorParkingSpaces sql.NullInt64
-	MainPhoto            sql.NullString
-	Notes                sql.NullString
+	LandSurface          int64
+	HasGarage            bool
+	OutdoorParkingSpaces int64
+	MainPhoto            string
+	Notes                string
 }
 
 func (q *Queries) CreateHouse(ctx context.Context, arg CreateHouseParams) error {
@@ -343,20 +342,20 @@ WHERE id = ?
 type UpdateHouseParams struct {
 	Title                string
 	CityID               int64
-	Address              sql.NullString
+	Address              string
 	Price                int64
 	Surface              int64
 	Rooms                int64
 	Bedrooms             int64
 	Bathrooms            int64
 	Floors               int64
-	ConstructionYear     sql.NullInt64
+	ConstructionYear     int64
 	HouseType            string
-	LandSurface          sql.NullInt64
-	HasGarage            sql.NullBool
-	OutdoorParkingSpaces sql.NullInt64
-	MainPhoto            sql.NullString
-	Notes                sql.NullString
+	LandSurface          int64
+	HasGarage            bool
+	OutdoorParkingSpaces int64
+	MainPhoto            string
+	Notes                string
 	ID                   int64
 }
 

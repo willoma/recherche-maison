@@ -1,9 +1,9 @@
 package web
 
-import "github.com/willoma/recherche-maison/db"
+import "github.com/willoma/recherche-maison/models"
 
 // CityManagementPage renders the page for managing cities
-templ CityManagementPage(cities []db.City) {
+templ CityManagementPage(cities []models.City) {
 	@Layout("Gestion des villes") {
 		<div class="city-management">
 			<div class="cities-list">

@@ -8,10 +8,10 @@ package web
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import "github.com/willoma/recherche-maison/db"
+import "github.com/willoma/recherche-maison/models"
 
 // CityManagementPage renders the page for managing cities
-func CityManagementPage(cities []db.City) templ.Component {
+func CityManagementPage(cities []models.City) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
